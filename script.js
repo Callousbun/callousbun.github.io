@@ -13,19 +13,63 @@
   function viewportW() { return document.documentElement.clientWidth; }
   function narrow() { return viewportW() < 480; }
 
-  /* Наибольший целый масштаб (1..max), при котором картинка помещается в рамку.
-     Если не помещается даже в 1x, остаётся 1x. */
+  /* ---------- Масштаб в физических пикселях экрана ----------
+     R - сколько физических пикселей в одном CSS-пикселе (на телефонах 2.5-3.5, на ПК обычно 1).
+     Целый масштаб k считается в ФИЗИЧЕСКИХ пикселях: один пиксель арта = ровно k пикселей экрана.
+     Размер в CSS = ширина * k / R. Так на телефоне нет рядов то в 2, то в 3 пикселя. */
+  function ratio() {
+    var d = window.devicePixelRatio || 1, vv = window.visualViewport;
+    return d * (vv && vv.scale ? Math.min(1, vv.scale) : 1);   // "версия для ПК" на телефоне уменьшает страницу - учитываем
+  }
+  function css(dev) { return dev / ratio() + "px"; }
+  /* Наибольший целый масштаб k (1..max), при котором картинка помещается в рамку maxW x maxH (CSS-пиксели).
+     Если не помещается даже при k=1, остаётся 1. */
   function fitScale(w, h, maxW, maxH, max) {
-    var s = Math.floor(Math.min(maxW / w, maxH / h));
+    var R = ratio(), s = Math.floor(Math.min(maxW * R / w, maxH * R / h) + 1e-6);
     return Math.max(1, Math.min(max || 10, s));
   }
-  /* То же для картинок интерфейса, но не меньше MIN (по умолчанию 2x) */
-  function uiScale(w, h, maxW, maxH) { return Math.max(MIN, fitScale(w, h, maxW, maxH, 10)); }
-
-  function applySize(img, s) {
-    img.style.width = img.naturalWidth * s + "px";
-    img.style.height = img.naturalHeight * s + "px";
+  /* То же для картинок интерфейса, но не меньше MIN "CSS-иксов" (по умолчанию 2x) */
+  function uiScale(w, h, maxW, maxH) {
+    var R = ratio(), kmin = Math.ceil(MIN * R - 1e-6);
+    var s = Math.floor(Math.min(maxW * R / w, maxH * R / h) + 1e-6);
+    return Math.max(kmin, Math.min(Math.max(kmin, Math.ceil(10 * R)), s));
   }
+  function applySize(img, s) {
+    img.style.width = css(img.naturalWidth * s);
+    img.style.height = css(img.naturalHeight * s);
+    scheduleAlign();
+  }
+  /* Выравнивание на сетку физических пикселей: у каждой картинки и рамки левый и верхний край
+     сдвигаются на доли пикселя так, чтобы попасть ровно на пиксель экрана. Тогда браузер не округляет
+     размер на 1 пиксель и все пиксели арта остаются одинаковыми. */
+  var alignRaf;
+  function scheduleAlign() { cancelAnimationFrame(alignRaf); alignRaf = requestAnimationFrame(alignAll); }
+  function alignAll() {
+    var R = ratio();
+    document.querySelectorAll("img.px:not(.s-thumb), canvas.frame-canvas").forEach(function (el) {
+      var isCv = el.tagName === "CANVAS";
+      if (!isCv && getComputedStyle(el).position === "static") el.style.position = "relative";
+      el.style.left = isCv ? "0px" : ""; el.style.top = isCv ? "0px" : "";
+      var r = el.getBoundingClientRect();
+      if (!r.width) return;
+      var dx = (Math.round(r.left * R) - r.left * R) / R, dy = (Math.round(r.top * R) - r.top * R) / R;
+      if (Math.abs(dx) > 1e-6) el.style.left = dx + "px";
+      if (Math.abs(dy) > 1e-6) el.style.top = dy + "px";
+    });
+  }
+  /* Размеры шрифта и строки подгоняются под сетку шрифта в физических пикселях (fontGrid, по умолчанию 9) */
+  var FONT_KEYS = ["title", "welcome", "contact", "hint", "toast", "desc", "caption", "zoom"];
+  function snapFonts() {
+    var R = ratio(), g = S.fontGrid || 9, root = document.documentElement, cs = getComputedStyle(root);
+    FONT_KEYS.forEach(function (k) {
+      var fs = parseFloat(cs.getPropertyValue("--fs-" + k));
+      if (fs) root.style.setProperty("--fs-" + k + "-px", Math.max(g, Math.round(fs * R / g) * g) / R + "px");
+      var lh = parseFloat(cs.getPropertyValue("--lh-" + k));
+      if (lh) root.style.setProperty("--lh-" + k + "-px", Math.max(1, Math.round(lh * R)) / R + "px");
+    });
+  }
+  snapFonts();
+
   /* Для галереи и нижнего арта */
   function scaled(img, src, getScale) {
     var run = function () { if (img.naturalWidth) applySize(img, getScale(img)); };
@@ -48,7 +92,7 @@
       var k = (pressing || (isSelected && isSelected())) ? "active" : (hovering ? "hover" : "normal");
       if (img.getAttribute("src") !== st[k]) img.src = st[k];
     }
-    function size() { if (w) { var s = getScale(w, h); img.style.width = w * s + "px"; img.style.height = h * s + "px"; } }
+    function size() { if (w) { var s = getScale(w, h); img.style.width = css(w * s); img.style.height = css(h * s); scheduleAlign(); } }
     var probe = new Image();
     probe.onload = function () { w = probe.naturalWidth; h = probe.naturalHeight; size(); };
     probe.src = st.normal;
@@ -107,24 +151,28 @@
     }
     function draw() {
       if (!ready) return;
-      var s = narrow() ? MIN : Math.max(MIN, S.frames.scale || 2);
-      var sw = tw * s, sh = th * s;
-      var rowMode = cfg.layout === "row";   // "row": панель из левого, центрального и правого тайла
-      var bw = (cfg.borderWidth == null ? tw : cfg.borderWidth) * s + (cfg.padding || 0);
-      host.style.padding = rowMode ? (cfg.paddingY || 0) + "px " + bw + "px" : bw + "px";
+      var R = ratio();
+      var kc = narrow() ? MIN : Math.max(MIN, S.frames.scale || 2);
+      var k = Math.max(1, Math.round(kc * R));     // масштаб тайлов в физических пикселях
+      var sw = tw * k, sh = th * k;                // размер тайла в физических пикселях
+      var rowMode = cfg.layout === "row";          // "row": панель из левого, центрального и правого тайла
+      var bw = (cfg.borderWidth == null ? tw : cfg.borderWidth) * k + Math.round((cfg.padding || 0) * R);
+      var py = Math.round((cfg.paddingY || 0) * R);
+      host.style.padding = rowMode ? py / R + "px " + bw / R + "px" : bw / R + "px";
       // ширина: целое число тайлов (не меньше 3), не шире доступного места
       host.style.width = ""; host.style.minHeight = "";
-      var W = Math.max(3, Math.floor(host.clientWidth / sw)) * sw;
-      host.style.width = W + "px";
+      var W = Math.max(3, Math.floor(host.getBoundingClientRect().width * R / sw + 1e-6)) * sw;
+      host.style.width = W / R + "px";
       // высота: содержимое, округлённое вверх до целого числа тайлов
-      var H = Math.max(rowMode ? 1 : 3, Math.ceil(host.offsetHeight / sh)) * sh;
-      host.style.minHeight = H + "px";
-      cv.width = W; cv.height = H; cv.style.width = W + "px"; cv.style.height = H + "px";
+      var H = Math.max(rowMode ? 1 : 3, Math.ceil(host.getBoundingClientRect().height * R / sh - 1e-3)) * sh;
+      host.style.minHeight = H / R + "px";
+      cv.width = W; cv.height = H; cv.style.width = W / R + "px"; cv.style.height = H / R + "px";
+      scheduleAlign();
       var ctx = cv.getContext("2d"); ctx.imageSmoothingEnabled = false;
-      function region(x, y, w, h, k) {
+      function region(x, y, w, h, k2) {
         var i = 0;
         for (var yy = y; yy < y + h; yy += sh) for (var xx = x; xx < x + w; xx += sw) {
-          var im = pick(k, i++); if (im) ctx.drawImage(im, xx, yy, sw, sh);
+          var im = pick(k2, i++); if (im) ctx.drawImage(im, xx, yy, sw, sh);
         }
       }
       if (rowMode) {
@@ -245,9 +293,9 @@
     card.appendChild(img); card.appendChild(desc);
     galleryEl.appendChild(card);
     scaled(img, w.file, function (i) {
-      var maxW = Math.max(40, galleryEl.clientWidth - 18);
+      var maxW = Math.max(40, galleryEl.getBoundingClientRect().width - 18);
       var s = fitScale(i.naturalWidth, i.naturalHeight, maxW, 640, 10);
-      card.style.width = Math.max(i.naturalWidth * s, Math.min(200, maxW)) + 18 + "px";
+      card.style.width = Math.max(i.naturalWidth * s / ratio(), Math.min(200, maxW)) + 18 + "px";
       return s;
     });
     langUpdaters.push(function () { desc.textContent = L(w.desc); img.alt = L(w.desc); });
@@ -271,7 +319,7 @@
     applySize(vImg, s);
     vImg.style.visibility = "";
     setSliderValue(s);
-    vStage.classList.toggle("pannable", vImg.naturalWidth * s > vStage.clientWidth || vImg.naturalHeight * s > vStage.clientHeight);
+    vStage.classList.toggle("pannable", vImg.naturalWidth * s > vStage.clientWidth * ratio() + 0.5 || vImg.naturalHeight * s > vStage.clientHeight * ratio() + 0.5);
   }
   function setViewerText() { if (openWork) { vCap.textContent = L(openWork.desc); vImg.alt = L(openWork.desc); } }
 
@@ -393,21 +441,22 @@
 
   function layoutSlider() {
     if (!dim.track || !dim.fill || !dim.thumb) return;
-    var sc = Math.max(MIN, narrow() ? 2 : 3);
+    var R = ratio();
+    var sc = Math.max(1, Math.round(Math.max(MIN, narrow() ? 2 : 3) * R));   // масштаб в физических пикселях
     var tile = dim.track.w * sc;
-    var maxL = Math.max(tile, Math.min(280, viewportW() - 200));
-    sLen = Math.floor(maxL / tile) * tile;
+    var maxL = Math.max(tile, Math.min(280, viewportW() - 200) * R);
+    sLen = Math.floor(maxL / tile) * tile;                                    // длина дорожки (физ. пиксели)
     var H = Math.max(dim.thumb.h, dim.track.h, dim.fill.h) * sc;
-    slider.style.width = sLen + "px"; slider.style.height = H + "px";
+    slider.style.width = sLen / R + "px"; slider.style.height = H / R + "px";
     function place(el, d) {
       var hh = d.h * sc;
-      el.style.height = hh + "px"; el.style.top = Math.round((H - hh) / 2) + "px";
-      el.style.backgroundSize = d.w * sc + "px " + hh + "px";
+      el.style.height = hh / R + "px"; el.style.top = Math.round((H - hh) / 2) / R + "px";
+      el.style.backgroundSize = d.w * sc / R + "px " + hh / R + "px";
     }
-    sTrack.style.width = sLen + "px"; place(sTrack, dim.track); place(sFill, dim.fill);
+    sTrack.style.width = sLen / R + "px"; place(sTrack, dim.track); place(sFill, dim.fill);
     sThumbW = dim.thumb.w * sc;
-    sThumb.style.width = sThumbW + "px"; sThumb.style.height = dim.thumb.h * sc + "px";
-    sThumb.style.top = Math.round((H - dim.thumb.h * sc) / 2) + "px";
+    sThumb.style.width = sThumbW / R + "px"; sThumb.style.height = dim.thumb.h * sc / R + "px";
+    sThumb.style.top = Math.round((H - dim.thumb.h * sc) / 2) / R + "px";
     setSliderValue(sCur);
   }
   function setSliderValue(v) {
@@ -416,8 +465,8 @@
     slider.setAttribute("aria-valuenow", v); slider.setAttribute("aria-valuetext", v + "x");
     if (!sLen) return;
     var left = Math.round((v - 1) / 9 * (sLen - sThumbW));
-    sThumb.style.left = left + "px";
-    sFill.style.width = left + Math.round(sThumbW / 2) + "px";
+    sThumb.style.left = left / ratio() + "px";
+    sFill.style.width = (left + Math.round(sThumbW / 2)) / ratio() + "px";
   }
   /* Меняет масштаб так, чтобы точка изображения под (ax, ay) осталась на месте.
      Без ax/ay - точка в центре видимой области (так работает ползунок). */
@@ -447,7 +496,7 @@
   }, { passive: false });
   function valueFromX(x) {
     var r = slider.getBoundingClientRect();
-    var rel = (x - r.left - sThumbW / 2) / Math.max(1, sLen - sThumbW);
+    var R = ratio(), rel = (x - r.left - sThumbW / R / 2) / Math.max(1, (sLen - sThumbW) / R);
     return Math.round(rel * 9) + 1;
   }
   var sliding = false;
@@ -468,17 +517,34 @@
      Наименьший целый масштаб, при котором ширина арта >= ширины окна. Центрируется, края обрезаются. */
   var fImg = $("#footerImg");
   scaled(fImg, S.images.footer, function (i) {
-    var vw = viewportW();
-    var s = Math.max(1, Math.ceil(vw / i.naturalWidth));
-    fImg.style.marginLeft = Math.floor((vw - i.naturalWidth * s) / 2) + "px";
+    var R = ratio();
+    var vwDev = Math.ceil(document.documentElement.getBoundingClientRect().width * R - 1e-6);   // ширина окна в физических пикселях
+    var s = Math.max(1, Math.ceil(vwDev / i.naturalWidth));
+    fImg.style.marginLeft = css(Math.floor((vwDev - i.naturalWidth * s) / 2));
     return s;
   });
 
   /* ---------- Запуск ---------- */
-  var raf;
-  window.addEventListener("resize", function () {
+  var raf, lastR = ratio();
+  function relayout() {
     cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(function () { scalers.forEach(function (f) { f(); }); });
-  });
+    raf = requestAnimationFrame(function () { lastR = ratio(); snapFonts(); scalers.forEach(function (f) { f(); }); alignAll(); });
+  }
+  window.addEventListener("resize", relayout);
+  window.addEventListener("orientationchange", relayout);
+  if (window.visualViewport) window.visualViewport.addEventListener("resize", function () { if (Math.abs(ratio() - lastR) > 1e-4) relayout(); });
+
+  /* Отладка на телефоне: откройте сайт с #debug в конце адреса */
+  if (location.hash === "#debug") {
+    var dbg = document.createElement("div");
+    dbg.style.cssText = "position:fixed;right:0;top:0;z-index:99;background:#000;color:#0f0;font:12px/1.3 monospace;padding:4px;white-space:pre;pointer-events:none";
+    document.body.appendChild(dbg);
+    var upd = function () {
+      var vv = window.visualViewport;
+      dbg.textContent = "dpr " + window.devicePixelRatio + "\nvv.scale " + (vv ? vv.scale : "-") + "\nR " + ratio().toFixed(4) + "\ncss width " + viewportW();
+    };
+    scalers.push(upd); upd();
+  }
+  if (window.ResizeObserver) new ResizeObserver(scheduleAlign).observe(document.body);
   applyLang();
 })();
