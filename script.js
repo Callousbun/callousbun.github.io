@@ -59,12 +59,16 @@
   }
   /* Размеры шрифта и строки подгоняются под сетку шрифта в физических пикселях (fontGrid, по умолчанию 9) */
   var FONT_KEYS = ["title", "welcome", "contact", "hint", "toast", "desc", "caption", "zoom"];
+  function contactsCompact() { return viewportW() < (S.contactsNarrow || 480); }   // "узкий" экран (CSS-пиксели), см. contactsNarrow в config.js
   function snapFonts() {
     var R = ratio(), g = S.fontGrid || 9, root = document.documentElement, cs = getComputedStyle(root);
+    var cel = $("#contacts");
+    if (cel) cel.classList.toggle("compact", contactsCompact());
     FONT_KEYS.forEach(function (k) {
-      var fs = parseFloat(cs.getPropertyValue("--fs-" + k));
+      var half = (k === "contact" && contactsCompact()) ? 0.5 : 1;   // узкий экран: подписи контактов вдвое меньше
+      var fs = parseFloat(cs.getPropertyValue("--fs-" + k)) * half;
       if (fs) root.style.setProperty("--fs-" + k + "-px", Math.max(g, Math.round(fs * R / g) * g) / R + "px");
-      var lh = parseFloat(cs.getPropertyValue("--lh-" + k));
+      var lh = parseFloat(cs.getPropertyValue("--lh-" + k)) * half;
       if (lh) root.style.setProperty("--lh-" + k + "-px", Math.max(1, Math.round(lh * R)) / R + "px");
     });
   }
@@ -105,6 +109,7 @@
       host.addEventListener("pointerup", function () { pressing = false; draw(); });
       host.addEventListener("pointercancel", function () { pressing = false; draw(); });
     }
+    draw.size = size;
     return draw;
   }
 
@@ -227,7 +232,7 @@
   frame($("#welcome"), "welcome");
 
   /* ---------- Контакты ---------- */
-  var contactsEl = $("#contacts");
+  var contactsEl = $("#contacts"), contactSizers = [];
   S.contacts.forEach(function (c) {
     var el;
     if (c.type === "link") {
@@ -240,7 +245,16 @@
     el.className = "contact";
     var icon = document.createElement("img");
     icon.className = "px"; icon.alt = "";
-    uiImage(icon, c.icon, function (w, h) { return uiScale(w, h, 32, 32); }, el);
+    var iconDraw = uiImage(icon, c.icon, function (w, h) {
+      // иконки всегда в один ряд: масштаб подбирается так, чтобы все влезли в ширину блока
+      var R = ratio(), n = S.contacts.length;
+      var gap = parseFloat(getComputedStyle(contactsEl).columnGap) || 0;
+      var per = Math.min(S.contactIconBox || 96, (contactsEl.getBoundingClientRect().width - gap * (n - 1)) / n);
+      var kmin = Math.max(1, Math.ceil((S.contactsMinScale || 1) * R - 1e-6));
+      var k = Math.floor(Math.max(per, 1) * R / w + 1e-6);
+      return Math.max(kmin, Math.min(Math.max(kmin, Math.ceil(10 * R)), k));
+    }, el);
+    contactSizers.push(iconDraw.size);
     var label = document.createElement("span");
     label.className = "label";
     var text = document.createElement("span"); text.textContent = c.text;
@@ -255,7 +269,6 @@
     }
     el.insertBefore(label, el.firstChild); el.insertBefore(icon, el.firstChild);
     contactsEl.appendChild(el);
-    frame(el, "social");
 
     langUpdaters.push(function () {
       el.title = L(c.title);
@@ -282,6 +295,26 @@
       el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); copy(); } });
     }
   });
+
+  /* На широком экране расстояние между иконками (одинаковое) увеличивается ровно настолько,
+     чтобы самые длинные подписи не наезжали друг на друга. На узком экране - заданное --contacts-gap-compact. */
+  function layoutContacts() {
+    contactsEl.style.columnGap = "";
+    if (contactsCompact()) return;
+    var items = contactsEl.querySelectorAll(".contact"), iw = [], lw = [];
+    items.forEach(function (it) {
+      iw.push(it.getBoundingClientRect().width);
+      var w = 0; it.querySelectorAll(".label > *").forEach(function (c) { w = Math.max(w, c.getBoundingClientRect().width); });
+      lw.push(w);
+    });
+    var base = parseFloat(getComputedStyle(contactsEl).columnGap) || 0, need = base;
+    for (var i = 0; i + 1 < items.length; i++) need = Math.max(need, (lw[i] + lw[i + 1]) / 2 - (iw[i] + iw[i + 1]) / 2 + 16);
+    contactsEl.style.columnGap = need + "px";
+  }
+  function relayoutContacts() { layoutContacts(); contactSizers.forEach(function (f) { f(); }); }
+  if (window.ResizeObserver) new ResizeObserver(relayoutContacts).observe(contactsEl);
+  scalers.push(relayoutContacts);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayoutContacts);
 
   /* ---------- Галерея ---------- */
   var galleryEl = $("#gallery");
