@@ -65,7 +65,7 @@ window.SITE = {
   // Все тайлы набора должны быть одного размера.
   frames: {
     scale: 4,
-    variantWeights: [70, 15, 15],
+    variantWeights: [45, 35, 15],
     welcome: {
       borderWidth: 12, padding: 8,
       tiles: {
