@@ -15,7 +15,7 @@
   --ff-caption: "PixeloidSans", monospace;  --fs-caption: 18px;  --lh-caption: 27px;  /* описание в просмотре */
   --ff-zoom:    "PixeloidSans", monospace;  --fs-zoom:    18px;  --lh-zoom:    27px;  /* подпись 3x у ползунка */
 }
-@media (max-width:480px) { :root { --fs-title:27px; --lh-title:36px; } }  /* размеры для телефонов */
+@media (max-width:480px) { :root { --fs-title:27px; --lh-title:36px; --fs-contact:9px; --lh-contact:14px; } }  /* размеры для телефонов */
 
 :root { --bg:#181519; --panel:#1d2029; --line:#3a3f4d; --text:#e6e8ee; --dim:rgba(230,232,238,.5); --accent:#7fd18b; }
 * { box-sizing:border-box; border-radius:0; }
@@ -32,27 +32,27 @@ body { font-family:"PixeloidSans", monospace; line-height:27px; -webkit-font-smo
 .framed:not(.frame-ready) { background:var(--panel); border:1px solid var(--line); }
 .frame-canvas { position:absolute; left:0; top:0; z-index:-1; pointer-events:none; }
 .welcome { padding:24px; }
-.welcome-title { margin:0 0 12px; font-family:var(--ff-title); font-size:var(--fs-title); line-height:var(--lh-title); font-weight:normal; overflow-wrap:anywhere; }
+.welcome-title { margin:0 0 12px; font-family:var(--ff-title); font-size:var(--fs-title-px, var(--fs-title)); line-height:var(--lh-title-px, var(--lh-title)); font-weight:normal; overflow-wrap:anywhere; }
 .welcome-title:empty { display:none; }
-.welcome-body { display:flex; gap:16px; align-items:flex-start; }
+.welcome-body { display:flex; flex-wrap:wrap; gap:16px; align-items:flex-start; }
 .avatar-col { flex:none; display:flex; flex-direction:column; gap:6px; }
-.bubble { margin:0; min-width:0; overflow-wrap:anywhere; font-family:var(--ff-welcome); font-size:var(--fs-welcome); line-height:var(--lh-welcome); }
+.bubble { margin:0; flex:1 1 220px; min-width:0; overflow-wrap:anywhere; font-family:var(--ff-welcome); font-size:var(--fs-welcome-px, var(--fs-welcome)); line-height:var(--lh-welcome-px, var(--lh-welcome)); }
 
 .contacts { display:flex; flex-direction:column; gap:8px; margin:16px 0; }
 .contact { position:relative; display:flex; align-items:center; gap:16px; padding:16px; color:var(--text); text-decoration:none; cursor:pointer; min-width:0; }
 .contact:hover > .frame-canvas { filter:brightness(1.25); }
 .contact:active > .frame-canvas { filter:brightness(.8); }
 .contact:focus-visible { outline:1px solid var(--text); outline-offset:2px; }
-.contact .label { font-family:var(--ff-contact); font-size:var(--fs-contact); line-height:var(--lh-contact); min-width:0; overflow-wrap:anywhere; user-select:text; -webkit-user-select:text; }
-.contact .hint { color:var(--dim); font-family:var(--ff-hint); font-size:var(--fs-hint); display:inline-block; white-space:nowrap; }
-.contact .toast { position:absolute; right:16px; top:0; bottom:0; align-items:center; color:var(--accent); font-family:var(--ff-toast); font-size:var(--fs-toast); line-height:var(--lh-toast); display:none; pointer-events:none; }
+.contact .label { font-family:var(--ff-contact); font-size:var(--fs-contact-px, var(--fs-contact)); line-height:var(--lh-contact-px, var(--lh-contact)); min-width:0; overflow-wrap:anywhere; user-select:text; -webkit-user-select:text; }
+.contact .hint { color:var(--dim); font-family:var(--ff-hint); font-size:var(--fs-hint-px, var(--fs-hint)); display:inline-block; white-space:nowrap; }
+.contact .toast { position:absolute; right:16px; top:0; bottom:0; align-items:center; color:var(--accent); font-family:var(--ff-toast); font-size:var(--fs-toast-px, var(--fs-toast)); line-height:var(--lh-toast-px, var(--lh-toast)); display:none; pointer-events:none; }
 .contact .toast.show { display:flex; }
 
 .gallery-wrap { padding:0 32px 32px; }
 .gallery { display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start; }
 .work { background:none; border:1px solid transparent; padding:8px; color:var(--text); font:inherit; text-align:left; cursor:pointer; }
 .work:hover, .work:focus-visible { border-color:var(--text); outline:none; }
-.work .desc { font-family:var(--ff-desc); font-size:var(--fs-desc); line-height:var(--lh-desc); color:var(--dim); margin-top:8px; overflow-wrap:anywhere; }
+.work .desc { font-family:var(--ff-desc); font-size:var(--fs-desc-px, var(--fs-desc)); line-height:var(--lh-desc-px, var(--lh-desc)); color:var(--dim); margin-top:8px; overflow-wrap:anywhere; }
 
 .footer-art { margin-top:48px; overflow:hidden; line-height:0; }
 .footer-art img { position:relative; }
@@ -62,14 +62,14 @@ body { font-family:"PixeloidSans", monospace; line-height:27px; -webkit-font-smo
 .viewer-bar { flex:none; padding:8px 16px; display:flex; justify-content:flex-end; }
 .viewer-stage { flex:1; min-height:0; overflow:auto; display:flex; padding:8px; }
 .viewer-stage img { margin:auto; flex:none; }
-.viewer-caption { flex:none; padding:12px 16px 16px; text-align:center; font-family:var(--ff-caption); font-size:var(--fs-caption); line-height:var(--lh-caption); max-height:30vh; overflow:auto; }
+.viewer-caption { flex:none; padding:12px 16px 16px; text-align:center; font-family:var(--ff-caption); font-size:var(--fs-caption-px, var(--fs-caption)); line-height:var(--lh-caption-px, var(--lh-caption)); max-height:30vh; overflow:auto; }
 
 @media (max-width:480px) { .welcome-body { gap:12px; } .page { padding:12px; } .gallery-wrap { padding:0 12px 12px; } .contact { gap:12px; } }
 
 /* --- Этап 2 --- */
 .viewer-bar { justify-content:space-between; align-items:center; gap:12px; }
 .zoom { display:flex; align-items:center; gap:10px; transition:opacity .4s; }
-.zoom span { min-width:3ch; font-family:var(--ff-zoom); font-size:var(--fs-zoom); line-height:var(--lh-zoom); }
+.zoom span { min-width:3ch; font-family:var(--ff-zoom); font-size:var(--fs-zoom-px, var(--fs-zoom)); line-height:var(--lh-zoom-px, var(--lh-zoom)); }
 .viewer-caption { transition:opacity .4s; }
 .viewer.idle .zoom, .viewer.idle .viewer-caption { opacity:0; pointer-events:none; }
 .viewer.idle { cursor:none; }
