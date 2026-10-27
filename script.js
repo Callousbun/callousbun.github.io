@@ -87,7 +87,7 @@
      srcs - строка или { normal, hover, active }. host - элемент, на который реагируем (мышь/касание).
      isSelected - необязательная функция: если вернула true, всегда показывается active.
      Размер берётся из файла normal, поэтому смена файла не двигает вёрстку. */
-  function uiImage(img, srcs, getScale, host, isSelected) {
+  function uiImage(img, srcs, getScale, host, isSelected, onReady) {
     if (typeof srcs === "string") srcs = { normal: srcs };
     var st = { normal: srcs.normal, hover: srcs.hover || srcs.normal, active: srcs.active || srcs.hover || srcs.normal };
     var hovering = false, pressing = false, w = 0, h = 0;
@@ -98,7 +98,7 @@
     }
     function size() { if (w) { var s = getScale(w, h); img.style.width = css(w * s); img.style.height = css(h * s); scheduleAlign(); } }
     var probe = new Image();
-    probe.onload = function () { w = probe.naturalWidth; h = probe.naturalHeight; size(); };
+    probe.onload = function () { w = probe.naturalWidth; h = probe.naturalHeight; size(); if (onReady) onReady(); };
     probe.src = st.normal;
     img.src = st.normal;
     scalers.push(size);
@@ -118,7 +118,8 @@
      поэтому тайлы никогда не обрезаются и не перекрываются.
      Вариации: для каждой клетки случайно, с весами из frames.variantWeights (один раз за загрузку). */
   var SLOTS = ["topLeft", "top", "topRight", "left", "center", "right", "bottomLeft", "bottom", "bottomRight"];
-  function frame(host, setName) {
+  function frame(host, setName, opts) {
+    opts = opts || {};
     var cfg = S.frames && S.frames[setName];
     if (!cfg) return;
     var weights = S.frames.variantWeights || [45, 35, 15];
@@ -166,10 +167,24 @@
       host.style.padding = rowMode ? py / R + "px " + bw / R + "px" : bw / R + "px";
       // ширина: целое число тайлов (не меньше 3), не шире доступного места
       host.style.width = ""; host.style.minHeight = "";
+      var slackEl = opts.slackEl && opts.slackEl();
+      if (slackEl) { slackEl.style.marginTop = ""; slackEl.style.marginBottom = ""; }
       var W = Math.max(3, Math.floor(host.getBoundingClientRect().width * R / sw + 1e-6)) * sw;
       host.style.width = W / R + "px";
+      // содержимое, зависящее от ширины блока (контакты), раскладывается здесь: ширина уже окончательная
+      if (opts.beforeHeight) opts.beforeHeight();
       // высота: содержимое, округлённое вверх до целого числа тайлов
-      var H = Math.max(rowMode ? 1 : 3, Math.ceil(host.getBoundingClientRect().height * R / sh - 1e-3)) * sh;
+      var natural = host.getBoundingClientRect().height * R;
+      var H = Math.max(rowMode ? 1 : 3, Math.ceil(natural / sh - 1e-3)) * sh;
+      // запас до целого тайла делится поровну: половина НАД контактами, половина ПОД ними
+      if (slackEl) {
+        var slack = Math.floor(H - natural);
+        if (slack > 0) {
+          var top = Math.floor(slack / 2), bottom = slack - top;
+          slackEl.style.marginTop = (parseFloat(getComputedStyle(slackEl).marginTop) || 0) + top / R + "px";
+          slackEl.style.marginBottom = bottom / R + "px";
+        }
+      }
       host.style.minHeight = H / R + "px";
       cv.width = W; cv.height = H; cv.style.width = W / R + "px"; cv.style.height = H / R + "px";
       scheduleAlign();
@@ -196,6 +211,8 @@
     }
     if (window.ResizeObserver) { var ro = new ResizeObserver(draw); ro.observe(host); ro.observe(host.parentElement); }
     scalers.push(draw);
+    draw.isReady = function () { return ready; };
+    return draw;
   }
 
   /* ---------- Язык ---------- */
@@ -229,11 +246,15 @@
   uiImage($("#avatar"), S.images.avatar, function (w, h) { var b = iconBox(); return uiScale(w, h, b, b); });
   uiImage($("#status"), S.images.status, function (w, h) { var b = iconBox() / 3; return uiScale(w, h, b, b); });
 
-  frame($("#welcome"), "welcome");
+  var welcomeDraw = frame($("#welcome"), "welcome", {
+    beforeHeight: function () { relayoutContacts(); },
+    slackEl: function () { return contactsEl; }
+  });
 
   /* ---------- Контакты ---------- */
-  var contactsEl = $("#contacts"), contactSizers = [];
-  S.contacts.forEach(function (c) {
+  var contactsEl = $("#contacts"), contactSizers = [], contactNat = [], contactK = 0;
+  function refreshWelcome() { if (welcomeDraw.isReady()) welcomeDraw(); else relayoutContacts(); }
+  S.contacts.forEach(function (c, idx) {
     var el;
     if (c.type === "link") {
       el = document.createElement("a");
@@ -246,14 +267,10 @@
     var icon = document.createElement("img");
     icon.className = "px"; icon.alt = "";
     var iconDraw = uiImage(icon, c.icon, function (w, h) {
-      // иконки всегда в один ряд: масштаб подбирается так, чтобы все влезли в ширину блока
-      var R = ratio(), n = S.contacts.length;
-      var gap = parseFloat(getComputedStyle(contactsEl).columnGap) || 0;
-      var per = Math.min(S.contactIconBox || 96, (contactsEl.getBoundingClientRect().width - gap * (n - 1)) / n);
-      var kmin = Math.max(1, Math.ceil((S.contactsMinScale || 1) * R - 1e-6));
-      var k = Math.floor(Math.max(per, 1) * R / w + 1e-6);
-      return Math.max(kmin, Math.min(Math.max(kmin, Math.ceil(10 * R)), k));
-    }, el);
+      // масштаб один для всех иконок и считается в layoutContacts (без обратной связи от текущих размеров)
+      contactNat[idx] = w;
+      return contactK || Math.max(1, Math.ceil((S.contactsMinScale || 1) * ratio() - 1e-6));
+    }, el, null, refreshWelcome);
     contactSizers.push(iconDraw.size);
     var label = document.createElement("span");
     label.className = "label";
@@ -300,25 +317,38 @@
     }
   });
 
-  /* На широком экране расстояние между иконками (одинаковое) увеличивается ровно настолько,
-     чтобы самые длинные подписи не наезжали друг на друга. На узком экране - заданное --contacts-gap-compact. */
+  /* Раскладка контактов считается за один проход и не зависит от предыдущего состояния:
+     для каждого масштаба k (от наибольшего к наименьшему) считаем нужное расстояние между иконками
+     (одинаковое; на широком экране - такое, чтобы самые длинные подписи не наезжали друг на друга,
+     на узком - --contacts-gap-compact) и берём первый k, при котором всё влезает в ширину блока. */
   function layoutContacts() {
     contactsEl.style.columnGap = "";
-    if (contactsCompact()) return;
-    var items = contactsEl.querySelectorAll(".contact"), iw = [], lw = [];
+    var n = contactNat.length, items = contactsEl.querySelectorAll(".contact");
+    for (var q = 0; q < S.contacts.length; q++) if (!contactNat[q]) return;   // размеры картинок ещё не известны
+    var R = ratio(), avail = contactsEl.getBoundingClientRect().width;
+    var base = parseFloat(getComputedStyle(contactsEl).columnGap) || 0, compact = contactsCompact();
+    var lw = [];
     items.forEach(function (it) {
-      iw.push(it.getBoundingClientRect().width);
       var w = 0; it.querySelectorAll(".label > *").forEach(function (c) { w = Math.max(w, c.getBoundingClientRect().width); });
       lw.push(w);
     });
-    var base = parseFloat(getComputedStyle(contactsEl).columnGap) || 0, need = base;
-    for (var i = 0; i + 1 < items.length; i++) need = Math.max(need, (lw[i] + lw[i + 1]) / 2 - (iw[i] + iw[i + 1]) / 2 + 16);
-    contactsEl.style.columnGap = need + "px";
+    var maxNat = Math.max.apply(null, contactNat);
+    var kmin = Math.max(1, Math.ceil((S.contactsMinScale || 1) * R - 1e-6));
+    var kmax = Math.max(kmin, Math.min(Math.ceil(10 * R), Math.floor((S.contactIconBox || 96) * R / maxNat + 1e-6)));
+    var k = kmin, gap = base;
+    for (var kk = kmax; kk >= kmin; kk--) {
+      var iw = contactNat.map(function (w) { return w * kk / R; }), need = base;
+      if (!compact) for (var i = 0; i + 1 < n; i++) need = Math.max(need, (lw[i] + lw[i + 1]) / 2 - (iw[i] + iw[i + 1]) / 2 + 16);
+      var total = iw.reduce(function (a, b) { return a + b; }, 0) + need * (n - 1);
+      k = kk; gap = need;
+      if (total <= avail + 1e-6) break;
+    }
+    contactK = k;
+    if (!compact) contactsEl.style.columnGap = gap + "px";
   }
   function relayoutContacts() { layoutContacts(); contactSizers.forEach(function (f) { f(); }); }
-  if (window.ResizeObserver) new ResizeObserver(relayoutContacts).observe(contactsEl);
-  scalers.push(relayoutContacts);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(relayoutContacts);
+  scalers.push(function () { if (!welcomeDraw.isReady()) relayoutContacts(); });   // запасной путь, если рамка не загрузилась
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshWelcome);
 
   /* ---------- Галерея ---------- */
   var galleryEl = $("#gallery");
