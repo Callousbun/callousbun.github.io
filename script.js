@@ -121,7 +121,7 @@
   function frame(host, setName) {
     var cfg = S.frames && S.frames[setName];
     if (!cfg) return;
-    var weights = S.frames.variantWeights || [70, 20, 10];
+    var weights = S.frames.variantWeights || [70, 15, 15];
     var slots = {}, pending = 0, tw = 0, th = 0, ready = false, rnd = {};
     var cv = document.createElement("canvas");
     cv.className = "px frame-canvas";
