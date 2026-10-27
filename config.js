@@ -7,6 +7,9 @@ window.SITE = {
   // Минимальный масштаб всех PNG интерфейса (кроме галереи и нижнего арта)
   minUiScale: 2,
 
+  // Сетка шрифта в пикселях (у Pixeloid Sans - 9). Размеры текста подгоняются под неё на любом экране.
+  fontGrid: 9,
+
   // Названия языков (используются как подпись для экранных читалок)
   langNames: { en: "ENG", ru: "RU" },
 
@@ -136,48 +139,12 @@ window.SITE = {
 	/*8*/	  
     { file: "assets/gallery/8.png", format: "png",
       desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*9*/	  
-    { file: "assets/gallery/9.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*10*/	  
-    { file: "assets/gallery/10.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*11*/	  
-    { file: "assets/gallery/11.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*12*/	  
-    { file: "assets/gallery/12.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*13*/	  
-    { file: "assets/gallery/13.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*14*/	  
-    { file: "assets/gallery/14.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
 	/*15*/	  
     { file: "assets/gallery/15.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*16*/	  
-    { file: "assets/gallery/16.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*17*/	  
-    { file: "assets/gallery/17.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*18*/
-    { file: "assets/gallery/18.gif", format: "gif",
-      desc: { en: "Test image 2: a small cross.", ru: "Тестовое изображение 2: маленький крестик." } },
-	/*19*/	  
-    { file: "assets/gallery/19.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*20*/	  
-    { file: "assets/gallery/20.png", format: "png",
       desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
 	/*21*/	  
     { file: "assets/gallery/21.png", format: "png",
       desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
-	/*22*/
-    { file: "assets/gallery/22.gif", format: "gif",
-      desc: { en: "Test image 2: a small cross.", ru: "Тестовое изображение 2: маленький крестик." } },
 
   ]
 };
