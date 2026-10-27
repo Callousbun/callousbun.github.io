@@ -96,7 +96,7 @@ window.SITE = {
 
   // Приветствие
   welcome: {
-    en: "Hi! I'm a pixel artist. Take a look at my work below. I'm open for commissions.",
+    en: "Hi! I'm a pixel artist. Take a look at my work below. I'm open for commissions. ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA",
     ru: "Привет! Я пиксель-артист. Посмотрите мои работы ниже. Я открыт для заказов."
   },
 
