@@ -257,7 +257,11 @@
     contactSizers.push(iconDraw.size);
     var label = document.createElement("span");
     label.className = "label";
-    var text = document.createElement("span"); text.textContent = c.text;
+        var text = document.createElement("span");
+    (c.label || c.text).split("\n").forEach(function (line, i) {
+      if (i) text.appendChild(document.createElement("br"));
+      text.appendChild(document.createTextNode(line));
+    });
     label.appendChild(text);
     var hint, toast;
     if (c.type === "copy") {

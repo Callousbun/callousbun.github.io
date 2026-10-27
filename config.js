@@ -10,7 +10,7 @@ window.SITE = {
   // Контакты-иконки: до какой ширины экрана (CSS-пиксели) экран считается "узким".
   // На узком экране подписи под иконками вдвое меньше, а расстояние между иконками --contacts-gap-compact (style.css).
   contactsNarrow: 800,
-  contactIconBox: 96,     // максимальный размер иконки контакта (CSS-пиксели)
+  contactIconBox: 192,     // максимальный размер иконки контакта (CSS-пиксели)
   contactsMinScale: 1,    // минимальный масштаб иконок контактов (они могут быть меньше 2x, чтобы влезть в один ряд)
 
   // Сетка шрифта в пикселях (у Pixeloid Sans - 9). Размеры текста подгоняются под неё на любом экране.
@@ -110,11 +110,11 @@ window.SITE = {
 
   // Контакты (иконка: normal / hover / active). type "copy" - копирует text в буфер, type "link" - открывает url в новой вкладке
   contacts: [
-    { icon: { normal: "assets/ui/icon-gmail.png", hover: "assets/ui/icon-gmail-hover.png", active: "assets/ui/icon-gmail-active.png" }, type: "copy", text: "yourname@gmail.com",
+    { icon: { normal: "assets/ui/icon-gmail.png", hover: "assets/ui/icon-gmail-hover.png", active: "assets/ui/icon-gmail-active.png" }, type: "copy", text: "callousbun@gmail.com", label: "callousbun\n@gmail.com",
       title: { en: "Copy e-mail", ru: "Скопировать почту" } },
-    { icon: { normal: "assets/ui/icon-discord.png", hover: "assets/ui/icon-discord-hover.png", active: "assets/ui/icon-discord-active.png" }, type: "link", text: "yourname", url: "https://discord.com/users/000000000000000000",
+    { icon: { normal: "assets/ui/icon-discord.png", hover: "assets/ui/icon-discord-hover.png", active: "assets/ui/icon-discord-active.png" }, type: "link", text: "callous_bun", url: "https://discord.com/users/callous_bun",
       title: { en: "Open Discord profile", ru: "Открыть профиль Discord" } },
-    { icon: { normal: "assets/ui/icon-telegram.png", hover: "assets/ui/icon-telegram-hover.png", active: "assets/ui/icon-telegram-active.png" }, type: "link", text: "@yourname", url: "https://t.me/yourname",
+    { icon: { normal: "assets/ui/icon-telegram.png", hover: "assets/ui/icon-telegram-hover.png", active: "assets/ui/icon-telegram-active.png" }, type: "link", text: "@callousbun", url: "https://t.me/callousbun",
       title: { en: "Open Telegram profile", ru: "Открыть профиль Telegram" } }
   ],
 
