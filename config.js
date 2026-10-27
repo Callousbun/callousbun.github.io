@@ -65,19 +65,19 @@ window.SITE = {
   // Все тайлы набора должны быть одного размера.
   frames: {
     scale: 4,
-    variantWeights: [70, 20, 10],
+    variantWeights: [70, 15, 15],
     welcome: {
       borderWidth: 12, padding: 8,
       tiles: {
-      topLeft: ["assets/ui/frames/top-left-1.png", "assets/ui/frames/top-left-2.png", "assets/ui/frames/top-left-3.png"],
-      top: ["assets/ui/frames/top-1.png", "assets/ui/frames/top-2.png", "assets/ui/frames/top-3.png"],
-      topRight: ["assets/ui/frames/top-right-1.png", "assets/ui/frames/top-right-2.png", "assets/ui/frames/top-right-3.png"],
-      left: ["assets/ui/frames/left-1.png", "assets/ui/frames/left-2.png", "assets/ui/frames/left-3.png"],
-      center: ["assets/ui/frames/center-1.png", "assets/ui/frames/center-2.png", "assets/ui/frames/center-3.png"],
-      right: ["assets/ui/frames/right-1.png", "assets/ui/frames/right-2.png", "assets/ui/frames/right-3.png"],
-      bottomLeft: ["assets/ui/frames/bottom-left-1.png", "assets/ui/frames/bottom-left-2.png", "assets/ui/frames/bottom-left-3.png"],
-      bottom: ["assets/ui/frames/bottom-1.png", "assets/ui/frames/bottom-2.png", "assets/ui/frames/bottom-3.png"],
-      bottomRight: ["assets/ui/frames/bottom-right-1.png", "assets/ui/frames/bottom-right-2.png", "assets/ui/frames/bottom-right-3.png"]
+      topLeft: ["assets/ui/frames/top-left-1.png", "assets/ui/frames/top-left-2.png", "assets/ui/frames/top-left-3.png", "assets/ui/frames/top-left-4.png"],
+      top: ["assets/ui/frames/top-1.png", "assets/ui/frames/top-2.png", "assets/ui/frames/top-3.png", "assets/ui/frames/top-4.png"],
+      topRight: ["assets/ui/frames/top-right-1.png", "assets/ui/frames/top-right-2.png", "assets/ui/frames/top-right-3.png", "assets/ui/frames/top-right-4.png"],
+      left: ["assets/ui/frames/left-1.png", "assets/ui/frames/left-2.png", "assets/ui/frames/left-3.png", "assets/ui/frames/left-4.png"],
+      center: ["assets/ui/frames/center-1.png", "assets/ui/frames/center-2.png", "assets/ui/frames/center-3.png", "assets/ui/frames/center-4.png", "assets/ui/frames/center-5.png", "assets/ui/frames/center-6.png", "assets/ui/frames/center-7.png", "assets/ui/frames/center-8.png"],
+      right: ["assets/ui/frames/right-1.png", "assets/ui/frames/right-2.png", "assets/ui/frames/right-3.png", "assets/ui/frames/right-4.png"],
+      bottomLeft: ["assets/ui/frames/bottom-left-1.png", "assets/ui/frames/bottom-left-2.png", "assets/ui/frames/bottom-left-3.png", "assets/ui/frames/bottom-left-4.png"],
+      bottom: ["assets/ui/frames/bottom-1.png", "assets/ui/frames/bottom-2.png", "assets/ui/frames/bottom-3.png", "assets/ui/frames/bottom-4.png"],
+      bottomRight: ["assets/ui/frames/bottom-right-1.png", "assets/ui/frames/bottom-right-2.png", "assets/ui/frames/bottom-right-3.png", "assets/ui/frames/bottom-right-4.png"]
       }
     },
     social: {
