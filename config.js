@@ -16,6 +16,22 @@ window.SITE = {
   // Сетка шрифта в пикселях (у Pixeloid Sans - 9). Размеры текста подгоняются под неё на любом экране.
   fontGrid: 9,
 
+  // 8-bit звуки. Браузер разрешает звук только после первого клика/касания по странице,
+  // поэтому самое первое наведение мыши беззвучное.
+  // enabled: false - выключить все звуки. volume - общая громкость (0..1).
+  // У каждого звука два варианта (достаточно одного):
+  //   1) синтез кодом: wave - "square" | "pulse" | "triangle" | "sawtooth" | "noise";
+  //      duty - ширина импульса для "pulse" (0.125, 0.25, 0.5); volume - громкость звука (0..1);
+  //      steps - ноты [[частота Гц, длительность сек], ...]; slide: true - плавно скользить между нотами;
+  //      у "noise" частота - это "яркость" шума (около 1000).
+  //   2) файл: file: "assets/sounds/hover.wav" (mp3/wav/ogg) - тогда синтез игнорируется.
+  sounds: {
+    enabled: true,
+    volume: 0.1,
+    hover: { wave: "square", volume: 0.15, steps: [[988, 0.035], [1319, 0.05]] },
+    click: { wave: "pulse", duty: 0.25, volume: 0.25, steps: [[392, 0.04], [587, 0.04], [784, 0.09]] }
+  },
+
   // Названия языков (используются как подпись для экранных читалок)
   langNames: { en: "ENG", ru: "RU" },
 
@@ -124,17 +140,23 @@ window.SITE = {
 	/*2*/	  
     { file: "assets/gallery/2.gif", format: "png",
       desc: { en: "", ru: "" } },
-	/*1*/
-    { file: "assets/gallery/1.gif", format: "gif",
-      desc: { en: "", ru: "" } },
 	/*3*/	  
     { file: "assets/gallery/3.png", format: "png",
+      desc: { en: "", ru: "" } },
+	/*4*/	  
+    { file: "assets/gallery/4.png", format: "png",
+      desc: { en: "", ru: "" } },
+	/*1*/
+    { file: "assets/gallery/1.gif", format: "gif",
       desc: { en: "", ru: "" } },
 	/*9*/	  
     { file: "assets/gallery/9.png", format: "png",
       desc: { en: "", ru: "" } },
-	/*4*/	  
-    { file: "assets/gallery/4.png", format: "png",
+	/*10*/	  
+    { file: "assets/gallery/10.png", format: "png",
+      desc: { en: "", ru: "" } },
+	/*11*/	  
+    { file: "assets/gallery/11.png", format: "png",
       desc: { en: "", ru: "" } },
 	/*5*/	  
     { file: "assets/gallery/5.png", format: "png",

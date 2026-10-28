@@ -166,11 +166,13 @@
       var py = Math.round((cfg.paddingY || 0) * R);
       host.style.padding = rowMode ? py / R + "px " + bw / R + "px" : bw / R + "px";
       // ширина: целое число тайлов (не меньше 3), не шире доступного места
-      host.style.width = ""; host.style.minHeight = "";
+      host.style.width = ""; host.style.minHeight = ""; host.style.marginLeft = "";
       var slackEl = opts.slackEl && opts.slackEl();
       if (slackEl) { slackEl.style.marginTop = ""; slackEl.style.marginBottom = ""; }
-      var W = Math.max(3, Math.floor(host.getBoundingClientRect().width * R / sw + 1e-6)) * sw;
+      var avail = host.getBoundingClientRect().width * R;
+      var W = Math.max(3, Math.floor(avail / sw + 1e-6)) * sw;
       host.style.width = W / R + "px";
+      host.style.marginLeft = Math.max(0, Math.floor((avail - W) / 2)) / R + "px";   // остаток ширины делим поровну слева и справа
       // содержимое, зависящее от ширины блока (контакты), раскладывается здесь: ширина уже окончательная
       if (opts.beforeHeight) opts.beforeHeight();
       // высота: содержимое, округлённое вверх до целого числа тайлов
@@ -360,8 +362,10 @@
     card.appendChild(img); card.appendChild(desc);
     galleryEl.appendChild(card);
     scaled(img, w.file, function (i) {
+      // как можно крупнее (целый масштаб), но чтобы работа целиком влезала в окно по ширине и высоте
       var maxW = Math.max(40, galleryEl.getBoundingClientRect().width - 18);
-      var s = fitScale(i.naturalWidth, i.naturalHeight, maxW, 640, 10);
+      var maxH = Math.max(40, window.innerHeight - 18 - (desc.textContent ? desc.offsetHeight + 8 : 0));
+      var s = fitScale(i.naturalWidth, i.naturalHeight, maxW, maxH, 10);
       card.style.width = Math.max(i.naturalWidth * s / ratio(), Math.min(200, maxW)) + 18 + "px";
       return s;
     });
