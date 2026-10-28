@@ -92,7 +92,7 @@ window.SITE = {
   },
 
   // Заголовок над приветствием (пустая строка "" скроет его)
-  title: { en: "Pixel Artist Portfolio", ru: "Портфолио пиксель-артиста" },
+  title: { en: "Hi! I'm Callousbun", ru: "ПРИВЕТ Я ГНОЙНЫЙ ХЛЕБ" },
 
   // Приветствие
   welcome: {
@@ -112,7 +112,7 @@ window.SITE = {
   contacts: [
     { icon: { normal: "assets/ui/icon-gmail.png", hover: "assets/ui/icon-gmail-hover.png", active: "assets/ui/icon-gmail-active.png" }, type: "copy", text: "callousbun@gmail.com", label: "callousbun\n@gmail.com",
       title: { en: "Copy e-mail", ru: "Скопировать почту" } },
-    { icon: { normal: "assets/ui/icon-discord.png", hover: "assets/ui/icon-discord-hover.png", active: "assets/ui/icon-discord-active.png" }, type: "link", text: "callous_bun", url: "https://discord.com/users/callous_bun",
+    { icon: { normal: "assets/ui/icon-discord.png", hover: "assets/ui/icon-discord-hover.png", active: "assets/ui/icon-discord-active.png" }, type: "copy", text: "callous_bun", label: "callous_bun",
       title: { en: "Open Discord profile", ru: "Открыть профиль Discord" } },
     { icon: { normal: "assets/ui/icon-telegram.png", hover: "assets/ui/icon-telegram-hover.png", active: "assets/ui/icon-telegram-active.png" }, type: "link", text: "@callousbun", url: "https://t.me/callousbun",
       title: { en: "Open Telegram profile", ru: "Открыть профиль Telegram" } }
