@@ -24,7 +24,8 @@ body { font-family:"PixeloidSans", monospace; line-height:27px; -webkit-font-smo
 .px { image-rendering:pixelated; image-rendering:crisp-edges; image-rendering:pixelated; display:block; max-width:none; }
 .page { max-width:960px; margin:0 auto; padding:16px; }
 
-.lang { display:flex; gap:4px; margin-bottom:8px; }
+.top-row { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; max-width:100%; margin:0 0 8px var(--welcome-ml, 0px); width:var(--welcome-w, auto); }  /* строка над приветствием: язык слева, звук справа, по ширине рамки */
+.lang { display:flex; gap:4px; }
 .btn { background:var(--panel); color:var(--text); border:1px solid var(--line); padding:4px 10px; font:inherit; font-size:13px; cursor:pointer; }
 .btn:hover { border-color:var(--text); }
 

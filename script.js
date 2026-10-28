@@ -172,7 +172,12 @@
       var avail = host.getBoundingClientRect().width * R;
       var W = Math.max(3, Math.floor(avail / sw + 1e-6)) * sw;
       host.style.width = W / R + "px";
-      host.style.marginLeft = Math.max(0, Math.floor((avail - W) / 2)) / R + "px";   // остаток ширины делим поровну слева и справа
+      var ml = Math.max(0, Math.floor((avail - W) / 2));
+      host.style.marginLeft = ml / R + "px";   // остаток ширины делим поровну слева и справа
+      if (opts.exposeVars) {                    // верхняя строка (язык / звук) выравнивается по рамке
+        document.documentElement.style.setProperty("--welcome-ml", ml / R + "px");
+        document.documentElement.style.setProperty("--welcome-w", W / R + "px");
+      }
       // содержимое, зависящее от ширины блока (контакты), раскладывается здесь: ширина уже окончательная
       if (opts.beforeHeight) opts.beforeHeight();
       // высота: содержимое, округлённое вверх до целого числа тайлов
@@ -243,12 +248,80 @@
     btn.addEventListener("click", function () { lang = code; applyLang(); });
   });
 
+  /* ---------- Кнопка звука ----------
+     Иконки рисуются кодом (пиксельные 16x16). Свои PNG - в config.js, images.sound. */
+  var SND_BITMAP = {
+    on: [
+      "................",
+      ".......#........",
+      "......##...#....",
+      ".....###....#...",
+      "..#####..#...#..",
+      "..#####...#..#..",
+      "..#####...#..#..",
+      "..#####...#..#..",
+      "..#####..#...#..",
+      ".....###....#...",
+      "......##...#....",
+      ".......#........",
+      "................"
+    ],
+    off: [
+      "................",
+      ".......#........",
+      "......##........",
+      ".....###..x...x.",
+      "..#####....x.x..",
+      "..#####.....x...",
+      "..#####....x.x..",
+      "..#####...x...x.",
+      "..#####.........",
+      ".....###........",
+      "......##........",
+      ".......#........",
+      "................"
+    ]
+  };
+  function sndIcon(kind, body, mark) {
+    var rows = SND_BITMAP[kind], cv = document.createElement("canvas"), g;
+    cv.width = 16; cv.height = rows.length; g = cv.getContext("2d");
+    rows.forEach(function (row, y) {
+      for (var x = 0; x < row.length; x++) {
+        if (row[x] === ".") continue;
+        g.fillStyle = row[x] === "x" ? mark : body; g.fillRect(x, y, 1, 1);
+      }
+    });
+    return cv.toDataURL("image/png");
+  }
+  var soundBtn = $("#soundBtn");
+  ["on", "off"].forEach(function (k) {
+    var srcs = (S.images.sound && S.images.sound[k]) || {
+      normal: sndIcon(k, "#c3c7d3", "#d9534f"), hover: sndIcon(k, "#ffffff", "#ff7a73"), active: sndIcon(k, "#7fd18b", "#ffb0ab")
+    };
+    uiImage(soundBtn.querySelector("img." + k), srcs, function (w, h) {
+      return narrow() ? uiScale(w, h, 72, 32) : uiScale(w, h, 96, 40);
+    }, soundBtn);
+  });
+  function syncSound() {
+    var fx = window.SoundFX, off = !!(fx && fx.isMuted());
+    soundBtn.style.display = (fx && fx.available) ? "" : "none";
+    soundBtn.querySelector("img.on").style.display = off ? "none" : "";
+    soundBtn.querySelector("img.off").style.display = off ? "" : "none";
+    var label = T(off ? "soundOff" : "soundOn") || "";
+    soundBtn.title = label; soundBtn.setAttribute("aria-label", label); soundBtn.setAttribute("aria-pressed", off ? "false" : "true");
+    scheduleAlign();
+  }
+  soundBtn.addEventListener("click", function () { if (window.SoundFX) window.SoundFX.toggle(); });
+  window.addEventListener("soundfx", syncSound);   // sounds.js сообщает, что готов или что состояние изменилось
+  langUpdaters.push(syncSound);
+
   /* ---------- Приветствие ---------- */
   function iconBox() { return narrow() ? 96 : 160; }
   uiImage($("#avatar"), S.images.avatar, function (w, h) { var b = iconBox(); return uiScale(w, h, b, b); });
   uiImage($("#status"), S.images.status, function (w, h) { var b = iconBox() / 3; return uiScale(w, h, b, b); });
 
   var welcomeDraw = frame($("#welcome"), "welcome", {
+    exposeVars: true,
     beforeHeight: function () { relayoutContacts(); },
     slackEl: function () { return contactsEl; }
   });
