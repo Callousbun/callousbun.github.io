@@ -123,34 +123,37 @@ window.SITE = {
   gallery: [
 	/*2*/	  
     { file: "assets/gallery/2.gif", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
 	/*1*/
     { file: "assets/gallery/1.gif", format: "gif",
-      desc: { en: "Test image 2: a small cross.", ru: "Тестовое изображение 2: маленький крестик." } },
+      desc: { en: "", ru: "" } },
 	/*3*/	  
     { file: "assets/gallery/3.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
+	/*9*/	  
+    { file: "assets/gallery/9.png", format: "png",
+      desc: { en: "", ru: "" } },
 	/*4*/	  
     { file: "assets/gallery/4.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
 	/*5*/	  
     { file: "assets/gallery/5.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
 	/*6*/	  
     { file: "assets/gallery/6.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
 	/*7*/	  
     { file: "assets/gallery/7.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
 	/*8*/	  
     { file: "assets/gallery/8.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
 	/*15*/	  
     { file: "assets/gallery/15.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
 	/*21*/	  
     { file: "assets/gallery/21.png", format: "png",
-      desc: { en: "Test image 1: a diagonal line.", ru: "Тестовое изображение 1: диагональная линия." } },
+      desc: { en: "", ru: "" } },
 
   ]
 };
