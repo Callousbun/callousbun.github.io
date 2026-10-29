@@ -96,3 +96,17 @@ body { font-family:"PixeloidSans", monospace; line-height:27px; -webkit-font-smo
 
 /* --- Этап 4 --- */
 .viewer-stage img { -webkit-user-drag:none; user-select:none; -webkit-user-select:none; }
+/* --- Этап 5: панель (ползунок, крестик) и описание лежат ПОВЕРХ арта и не отнимают у него место --- */
+.viewer { display:block; }
+.viewer[hidden] { display:none; }
+.viewer-row { position:absolute; inset:0; }
+.viewer-bar { position:absolute; top:0; left:0; right:0; z-index:3; pointer-events:none; }
+.viewer-bar > * { pointer-events:auto; }
+.zoom { background:rgba(10,11,14,.6); padding:4px 10px; }
+.viewer-caption { position:absolute; left:0; right:0; bottom:16px; z-index:3; width:fit-content; max-width:min(92%, 900px); margin:0 auto; padding:8px 16px; background:rgba(10,11,14,.75); max-height:30vh; }
+.viewer-caption:empty { display:none; }
+
+/* --- Этап 6: плавное появление страницы. Пока html.loading, виден только фон --- */
+.page, .gallery-wrap, .footer-art { transition:opacity .7s ease-out; }
+html.loading .page, html.loading .gallery-wrap, html.loading .footer-art { opacity:0; }
+@media (prefers-reduced-motion:reduce) { .page, .gallery-wrap, .footer-art { transition:none; } }

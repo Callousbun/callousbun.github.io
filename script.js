@@ -25,8 +25,8 @@
   /* Наибольший целый масштаб k (1..max), при котором картинка помещается в рамку maxW x maxH (CSS-пиксели).
      Если не помещается даже при k=1, остаётся 1. */
   function fitScale(w, h, maxW, maxH, max) {
-    var R = ratio(), s = Math.floor(Math.min(maxW * R / w, maxH * 0.8 * R / h) + 1e-6);
-    return Math.max(1, Math.min(max || 10, s) );
+    var R = ratio(), s = Math.floor(Math.min(maxW * R / w, maxH * R / h) + 1e-6);
+    return Math.max(1, Math.min(max || 10, s));
   }
   /* То же для картинок интерфейса, но не меньше MIN "CSS-иксов" (по умолчанию 2x) */
   function uiScale(w, h, maxW, maxH) {
@@ -124,6 +124,7 @@
     if (!cfg) return;
     var weights = S.frames.variantWeights || [45, 35, 15];
     var slots = {}, pending = 0, tw = 0, th = 0, ready = false, rnd = {};
+    var readyResolve, readyPromise = new Promise(function (r) { readyResolve = r; });
     var cv = document.createElement("canvas");
     cv.className = "px frame-canvas";
     host.classList.add("framed"); host.insertBefore(cv, host.firstChild);
@@ -142,10 +143,11 @@
       if (--pending > 0) return;
       SLOTS.forEach(function (k) { slots[k] = slots[k].filter(Boolean); });   // порядок как в config.js
       var first = slots.center[0] || slots.topLeft[0];
-      if (!first) return;   // тайлы не найдены: остаётся простая рамка CSS
+      if (!first) { readyResolve(); return; }   // тайлы не найдены: остаётся простая рамка CSS
       tw = first.naturalWidth; th = first.naturalHeight; ready = true;
-      host.classList.add("frame-ready"); draw();
+      host.classList.add("frame-ready"); draw(); readyResolve();
     }
+    if (!pending) { pending = 1; done(); }
     function pick(k, i) {
       var list = slots[k]; if (!list.length) return null;
       var a = rnd[k] || (rnd[k] = []);
@@ -219,6 +221,7 @@
     if (window.ResizeObserver) { var ro = new ResizeObserver(draw); ro.observe(host); ro.observe(host.parentElement); }
     scalers.push(draw);
     draw.isReady = function () { return ready; };
+    draw.whenReady = readyPromise;
     return draw;
   }
 
@@ -435,9 +438,9 @@
     card.appendChild(img); card.appendChild(desc);
     galleryEl.appendChild(card);
     scaled(img, w.file, function (i) {
-      // как можно крупнее (целый масштаб), но чтобы работа целиком влезала в окно по ширине и высоте
+      // как можно крупнее (целый масштаб), но чтобы карточка влезала в окно по ширине, а по высоте - в galleryMaxH (доля высоты окна)
       var maxW = Math.max(40, galleryEl.getBoundingClientRect().width - 18);
-      var maxH = Math.max(40, window.innerHeight - 18 - (desc.textContent ? desc.offsetHeight + 8 : 0));
+      var maxH = Math.max(40, window.innerHeight * (S.galleryMaxH || 0.8) - 18 - (desc.textContent ? desc.offsetHeight + 8 : 0));
       var s = fitScale(i.naturalWidth, i.naturalHeight, maxW, maxH, 10);
       card.style.width = Math.max(i.naturalWidth * s / ratio(), Math.min(200, maxW)) + 18 + "px";
       return s;
@@ -465,7 +468,11 @@
     setSliderValue(s);
     vStage.classList.toggle("pannable", vImg.naturalWidth * s > vStage.clientWidth * ratio() + 0.5 || vImg.naturalHeight * s > vStage.clientHeight * ratio() + 0.5);
   }
-  function setViewerText() { if (openWork) { vCap.textContent = L(openWork.desc); vImg.alt = L(openWork.desc); } }
+  function setViewerText() {   // в просмотре - расширенное описание fullDesc, а если его нет, то обычное desc
+    if (!openWork) return;
+    var t = (openWork.fullDesc && L(openWork.fullDesc)) || L(openWork.desc);
+    vCap.textContent = t; vImg.alt = t;
+  }
 
   function setWork(i) {
     var n = S.gallery.length;
@@ -691,4 +698,28 @@
   }
   if (window.ResizeObserver) new ResizeObserver(scheduleAlign).observe(document.body);
   applyLang();
+
+  /* ---------- Плавное появление ----------
+     Пока шрифты, рамка и первые картинки не готовы, на странице виден только фон (html.loading, см. style.css).
+     Потом всё плавно проявляется. Страховка: через 4 секунды страница покажется в любом случае. */
+  (function () {
+    var shown = false;
+    function show() {
+      if (shown) return; shown = true;
+      lastR = ratio(); snapFonts(); scalers.forEach(function (f) { f(); }); alignAll();   // финальный пересчёт перед показом
+      requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.remove("loading"); }); });
+    }
+    function imgReady(img) {
+      return new Promise(function (res) {
+        if (img.complete) return res();
+        img.addEventListener("load", res); img.addEventListener("error", res);
+      });
+    }
+    // ждём все картинки верхней части страницы и первые 4 работы (остальные догрузятся уже на готовой странице)
+    var waits = [].slice.call(document.querySelectorAll(".page img, .gallery .work:nth-child(-n+4) img")).map(imgReady);
+    if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
+    if (welcomeDraw && welcomeDraw.whenReady) waits.push(welcomeDraw.whenReady);
+    Promise.all(waits).then(function () { return new Promise(function (r) { requestAnimationFrame(r); }); }).then(show);
+    setTimeout(show, 4000);
+  })();
 })();

@@ -16,6 +16,9 @@ window.SITE = {
   // Сетка шрифта в пикселях (у Pixeloid Sans - 9). Размеры текста подгоняются под неё на любом экране.
   fontGrid: 9,
 
+  // Максимальная высота карточки работы в галерее - доля высоты окна (0.8 = 80%). В просмотре на весь экран это не действует.
+  galleryMaxH: 0.8,
+
   // 8-bit звуки. Браузер разрешает звук только после первого клика/касания по странице,
   // поэтому самое первое наведение мыши беззвучное.
   // enabled: false (здесь) - полностью убрать звуки и кнопку звука. volume - общая громкость (0..1).
@@ -34,30 +37,30 @@ window.SITE = {
     enabled: true,
     volume: 0.5,
     groups: {
-      // Кнопки соцсетей (звонкие 8-bit сигналы)
+      // Кнопки соцсетей 
       social: { enabled: true, selector: ".contact",
         hover: { wave: "triangle", volume: 0.05, steps: [[987.7, 0.035], [1397, 0.05]] },
         click: { wave: "pulse", duty: 0.25, volume: 0.05, steps: [[392, 0.04], [587, 0.04], [784, 0.09]] } },
 
-      // Арты в галерее (глухие басовые стуки)
+      // Арты в галерее 
       art: { enabled: true, selector: ".work",
         hover: { wave: "sine", volume: 0.3, slide: true, decay: true, lowpass: 700, steps: [[220, 0.07]] },              //file: "assets/sounds/galleryhover.wav"
         click: [ { wave: "sine", volume: 0.6, slide: true, decay: true, steps: [[220, 0.05], [55, 0.14]] },
                  { wave: "sawtooth", volume: 0.18, decay: true, lowpass: 900, steps: [[261.6, 0.05]] } ] },
 
-      // Кнопки языка (сухой "деревянный" стук повыше)
+      // Кнопки языка 
       lang: { enabled: true, selector: "#langBar .pbtn",
         hover: { wave: "sine", volume: 0.3, slide: true, decay: true, lowpass: 700, steps: [[220, 0.07]] },
         click: [ { wave: "triangle", volume: 0.1, slide: true, decay: true, lowpass: 900, steps: [[261.6, 0.03], [110, 0.1]] },
                  { wave: "pulse", duty: 1, volume: 0.2, decay: true, lowpass: 1200, steps: [[587.3, 0.3]] } ] },
 
-      // Интерфейс арта, открытого на весь экран: стрелки, крестик, ползунок (самый низкий, "каменный" стук)
+      // Интерфейс арта, открытого на весь экран: стрелки, крестик, ползунок
       viewer: { enabled: true, selector: "#viewer .pbtn, #viewer .slider",
         hover: { wave: "sine", volume: 0.2, slide: true, decay: true, steps: [[200, 0.02], [100, 0.05]] },
         click: [ { wave: "sine", volume: 0.6, slide: true, decay: true, steps: [[120, 0.04], [45, 0.16]] },
                  { wave: "noise", volume: 0.15, decay: true, lowpass: 600, steps: [[800, 0.05]] } ] },
 
-      // Кнопка вкл/выкл звука (звук нажатия слышен при ВКЛЮЧЕНИИ)
+      // Кнопка вкл/выкл звука
       toggle: { enabled: true, selector: "#soundBtn",
         hover: { wave: "triangle", volume: 0.05, steps: [[987.7, 0.035], [1397, 0.05]] },
         click: { wave: "pulse", duty: 0.25, volume: 0.05, steps: [[392, 0.04], [587, 0.04], [784, 0.09]] } },
@@ -141,12 +144,12 @@ window.SITE = {
   },
 
   // Заголовок над приветствием (пустая строка "" скроет его)
-  title: { en: "Hi! I'm Callousbun", ru: "ПРИВЕТ Я ГНОЙНЫЙ ХЛЕБ" },
+  title: { en: "Hi! I'm Callousbun", ru: "Привет, я Callousbun" },
 
   // Приветствие
   welcome: {
-    en: "Hi! I'm a pixel artist. Take a look at my work below. I'm open for commissions. ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA ABOBA",
-    ru: "Привет! Я пиксель-артист. Посмотрите мои работы ниже. Я открыт для заказов."
+    en: " I've been making games with pixels for 8 years. I specialize in environments, backgrounds, props, icons, and illustrations. I've worked on all kinds of game art, from UI elements to character animations. Feel free to check out my work below and drop me a message anytime!",
+    ru: "Рисую игры пикселями уже 8 лет. Специализируюсь на отрисовке окружения, фонов, пропсов, иконок и иллюстраций. Имею опыт в создании всей игровой графики - от элементов UI, до анимации персонажей. Вы можете посмотреть мои работы ниже. Пишите в любое время"
   },
 
   // Остальные тексты интерфейса
@@ -169,46 +172,61 @@ window.SITE = {
 
   // Работы. Чтобы добавить работу, скопируйте один блок { ... }, и поменяйте данные.
   // format: "png" или "gif" (для справки)
+  // desc - короткое описание под артом в галерее; fullDesc - расширенное описание, только в просмотре на весь экран
+  // (если fullDesc пустое или его нет, в просмотре показывается desc).
   gallery: [
+	/*0*/	  
+    { file: "assets/gallery/0.png", format: "png",
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*2*/	  
-    { file: "assets/gallery/2.gif", format: "png",
-      desc: { en: "", ru: "" } },
+    { file: "assets/gallery/2.gif", format: "gif",
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*3*/	  
     { file: "assets/gallery/3.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*4*/	  
     { file: "assets/gallery/4.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*1*/
     { file: "assets/gallery/1.gif", format: "gif",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*9*/	  
     { file: "assets/gallery/9.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*10*/	  
     { file: "assets/gallery/10.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*11*/	  
     { file: "assets/gallery/11.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*5*/	  
     { file: "assets/gallery/5.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*6*/	  
     { file: "assets/gallery/6.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*7*/	  
     { file: "assets/gallery/7.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*8*/	  
     { file: "assets/gallery/8.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 	/*15*/	  
     { file: "assets/gallery/15.png", format: "png",
-      desc: { en: "", ru: "" } },
-	/*21*/	  
-    { file: "assets/gallery/21.png", format: "png",
-      desc: { en: "", ru: "" } },
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "", ru: "" } },
 
   ]
 };
