@@ -59,8 +59,8 @@ window.SITE = {
 
       // Кнопка вкл/выкл звука (звук нажатия слышен при ВКЛЮЧЕНИИ)
       toggle: { enabled: true, selector: "#soundBtn",
-        hover: { wave: "square", volume: 0.1, steps: [[784, 0.03]] },
-        click: { wave: "pulse", duty: 0.125, volume: 0.2, steps: [[523, 0.05], [1047, 0.08]] } }
+        hover: { wave: "triangle", volume: 0.05, steps: [[987.7, 0.035], [1397, 0.05]] },
+        click: { wave: "pulse", duty: 0.25, volume: 0.05, steps: [[392, 0.04], [587, 0.04], [784, 0.09]] } },
     }
   },
 
