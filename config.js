@@ -36,20 +36,20 @@ window.SITE = {
     groups: {
       // Кнопки соцсетей (звонкие 8-bit сигналы)
       social: { enabled: true, selector: ".contact",
-        hover: { wave: "square", volume: 0.15, steps: [[988, 0.035], [1319, 0.05]] },
-        click: { wave: "pulse", duty: 0.25, volume: 0.25, steps: [[392, 0.04], [587, 0.04], [784, 0.09]] } },
+        hover: { wave: "triangle", volume: 0.05, steps: [[987.7, 0.035], [1397, 0.05]] },
+        click: { wave: "pulse", duty: 0.25, volume: 0.05, steps: [[392, 0.04], [587, 0.04], [784, 0.09]] } },
 
       // Арты в галерее (глухие басовые стуки)
       art: { enabled: true, selector: ".work",
-        hover: { wave: "triangle", volume: 0.3, slide: true, decay: true, lowpass: 700, steps: [[170, 0.03], [85, 0.07]] },
-        click: [ { wave: "sine", volume: 0.6, slide: true, decay: true, steps: [[150, 0.04], [55, 0.14]] },
-                 { wave: "noise", volume: 0.18, decay: true, lowpass: 900, steps: [[1000, 0.04]] } ] },
+        hover: { wave: "sine", volume: 0.3, slide: true, decay: true, lowpass: 700, steps: [[220, 0.07]] },              //file: "assets/sounds/galleryhover.wav"
+        click: [ { wave: "sine", volume: 0.6, slide: true, decay: true, steps: [[220, 0.05], [55, 0.14]] },
+                 { wave: "sawtooth", volume: 0.18, decay: true, lowpass: 900, steps: [[261.6, 0.05]] } ] },
 
       // Кнопки языка (сухой "деревянный" стук повыше)
       lang: { enabled: true, selector: "#langBar .pbtn",
-        hover: { wave: "triangle", volume: 0.25, slide: true, decay: true, lowpass: 800, steps: [[240, 0.02], [120, 0.05]] },
-        click: [ { wave: "triangle", volume: 0.5, slide: true, decay: true, lowpass: 900, steps: [[220, 0.03], [100, 0.1]] },
-                 { wave: "noise", volume: 0.12, decay: true, lowpass: 1200, steps: [[1000, 0.03]] } ] },
+        hover: { wave: "sine", volume: 0.3, slide: true, decay: true, lowpass: 700, steps: [[220, 0.07]] },
+        click: [ { wave: "triangle", volume: 0.1, slide: true, decay: true, lowpass: 900, steps: [[261.6, 0.03], [110, 0.1]] },
+                 { wave: "pulse", duty: 1, volume: 0.2, decay: true, lowpass: 1200, steps: [[587.3, 0.3]] } ] },
 
       // Интерфейс арта, открытого на весь экран: стрелки, крестик, ползунок (самый низкий, "каменный" стук)
       viewer: { enabled: true, selector: "#viewer .pbtn, #viewer .slider",

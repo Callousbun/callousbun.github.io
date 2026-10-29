@@ -25,8 +25,8 @@
   /* Наибольший целый масштаб k (1..max), при котором картинка помещается в рамку maxW x maxH (CSS-пиксели).
      Если не помещается даже при k=1, остаётся 1. */
   function fitScale(w, h, maxW, maxH, max) {
-    var R = ratio(), s = Math.floor(Math.min(maxW * R / w, maxH * R / h) + 1e-6);
-    return Math.max(1, Math.min(max || 10, s));
+    var R = ratio(), s = Math.floor(Math.min(maxW * R / w, maxH * 0.8 * R / h) + 1e-6);
+    return Math.max(1, Math.min(max || 10, s) );
   }
   /* То же для картинок интерфейса, но не меньше MIN "CSS-иксов" (по умолчанию 2x) */
   function uiScale(w, h, maxW, maxH) {
