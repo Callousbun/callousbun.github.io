@@ -179,6 +179,7 @@
       if (opts.exposeVars) {                    // верхняя строка (язык / звук) выравнивается по рамке
         document.documentElement.style.setProperty("--welcome-ml", ml / R + "px");
         document.documentElement.style.setProperty("--welcome-w", W / R + "px");
+        document.documentElement.style.setProperty("--welcome-pad", bw / R + "px");
       }
       // содержимое, зависящее от ширины блока (контакты), раскладывается здесь: ширина уже окончательная
       if (opts.beforeHeight) opts.beforeHeight();
@@ -438,9 +439,10 @@
     card.appendChild(img); card.appendChild(desc);
     galleryEl.appendChild(card);
     scaled(img, w.file, function (i) {
-      // как можно крупнее (целый масштаб), но чтобы карточка влезала в окно по ширине, а по высоте - в galleryMaxH (доля высоты окна)
+      // как можно крупнее (целый масштаб), но чтобы арт влезал в окно по ширине, а по высоте - в galleryMaxH (доля высоты окна).
+      // Подпись под артом в расчёте НЕ участвует: добавление или удаление описания не меняет масштаб.
       var maxW = Math.max(40, galleryEl.getBoundingClientRect().width - 18);
-      var maxH = Math.max(40, window.innerHeight * (S.galleryMaxH || 0.8) - 18 - (desc.textContent ? desc.offsetHeight + 8 : 0));
+      var maxH = Math.max(40, window.innerHeight * (S.galleryMaxH || 0.8) - 18);
       var s = fitScale(i.naturalWidth, i.naturalHeight, maxW, maxH, 10);
       card.style.width = Math.max(i.naturalWidth * s / ratio(), Math.min(200, maxW)) + 18 + "px";
       return s;
@@ -471,7 +473,16 @@
   function setViewerText() {   // в просмотре - расширенное описание fullDesc, а если его нет, то обычное desc
     if (!openWork) return;
     var t = (openWork.fullDesc && L(openWork.fullDesc)) || L(openWork.desc);
-    vCap.textContent = t; vImg.alt = t;
+    vCap.textContent = "";
+    t.split(/(https?:\/\/\S+)/g).forEach(function (part, i) {   // нечётные части - ссылки http(s)
+      if (i % 2 === 0) { if (part) vCap.appendChild(document.createTextNode(part)); return; }
+      var m = part.match(/^(.*?)([.,;:!?)\]]*)$/);                 // знаки препинания в конце не входят в ссылку
+      var a = document.createElement("a");
+      a.href = m[1]; a.textContent = m[1]; a.target = "_blank"; a.rel = "noopener noreferrer";
+      vCap.appendChild(a);
+      if (m[2]) vCap.appendChild(document.createTextNode(m[2]));
+    });
+    vImg.alt = t;
   }
 
   function setWork(i) {

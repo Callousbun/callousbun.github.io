@@ -110,3 +110,19 @@ body { font-family:"PixeloidSans", monospace; line-height:27px; -webkit-font-smo
 .page, .gallery-wrap, .footer-art { transition:opacity .7s ease-out; }
 html.loading .page, html.loading .gallery-wrap, html.loading .footer-art { opacity:0; }
 @media (prefers-reduced-motion:reduce) { .page, .gallery-wrap, .footer-art { transition:none; } }
+
+/* --- Этап 7 --- */
+/* Кнопка звука: в правом верхнем углу приветственного блока, на уровне содержимого (небольшой отступ от края рамки) */
+#soundBtn { position:absolute; top:var(--welcome-pad, 56px); right:var(--welcome-pad, 56px); z-index:2; }
+.welcome-title { padding-right:44px; }   /* заголовок не заезжает под кнопку звука */
+
+/* Ссылки в описании арта (просмотр) */
+.viewer-caption { overflow-wrap:anywhere; }
+.viewer-caption a { color:var(--accent); text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+.viewer-caption a:hover, .viewer-caption a:focus-visible { color:var(--text); outline:none; }
+
+/* Большие экраны (FullHD, QHD): заголовок и текст приветствия крупнее на 1-2 шага по 9 px. Телефоны и ноутбуки не затронуты. */
+@media (min-width:1600px) {
+  :root { --fs-title:45px; --lh-title:54px; --fs-welcome:27px; --lh-welcome:40px; }
+}
+

@@ -44,20 +44,19 @@ window.SITE = {
 
       // Арты в галерее 
       art: { enabled: true, selector: ".work",
-        hover: { wave: "sine", volume: 0.3, slide: true, decay: true, lowpass: 700, steps: [[220, 0.07]] },              //file: "assets/sounds/galleryhover.wav"
-        click: [ { wave: "sine", volume: 0.6, slide: true, decay: true, steps: [[220, 0.05], [55, 0.14]] },
-                 { wave: "sawtooth", volume: 0.18, decay: true, lowpass: 900, steps: [[261.6, 0.05]] } ] },
+        hover: { wave: "sine", volume: 0.2, slide: true, decay: true, lowpass: 700, steps: [[220, 0.07]] },              //file: "assets/sounds/galleryhover.wav"
+        click: [ { wave: "sine", volume: 0.3, slide: true, decay: true, steps: [[220, 0.05], [110, 0.14]] },
+                 { wave: "noise", volume: 0.15, decay: true, lowpass: 1500, steps: [[440, 0.05]] } ] },
 
       // Кнопки языка 
       lang: { enabled: true, selector: "#langBar .pbtn",
-        hover: { wave: "sine", volume: 0.3, slide: true, decay: true, lowpass: 700, steps: [[220, 0.07]] },
-        click: [ { wave: "triangle", volume: 0.1, slide: true, decay: true, lowpass: 900, steps: [[261.6, 0.03], [110, 0.1]] },
-                 { wave: "pulse", duty: 1, volume: 0.2, decay: true, lowpass: 1200, steps: [[587.3, 0.3]] } ] },
+        hover: { wave: "triangle", volume: 0.05, steps: [[987.7, 0.035], [1397, 0.05]] },
+        click: { wave: "pulse", duty: 0.25, volume: 0.05, steps: [[392, 0.04], [587, 0.04], [784, 0.09]] } },
 
       // Интерфейс арта, открытого на весь экран: стрелки, крестик, ползунок
       viewer: { enabled: true, selector: "#viewer .pbtn, #viewer .slider",
         hover: { wave: "sine", volume: 0.2, slide: true, decay: true, steps: [[200, 0.02], [100, 0.05]] },
-        click: [ { wave: "sine", volume: 0.6, slide: true, decay: true, steps: [[120, 0.04], [45, 0.16]] },
+        click: [ { wave: "sine", volume: 0.3, slide: true, decay: true, steps: [[123.5, 0.04], [110, 0.16]] },
                  { wave: "noise", volume: 0.15, decay: true, lowpass: 600, steps: [[800, 0.05]] } ] },
 
       // Кнопка вкл/выкл звука
@@ -117,19 +116,19 @@ window.SITE = {
   // Все тайлы набора должны быть одного размера.
   frames: {
     scale: 4,
-    variantWeights: [45, 35, 15],
+    variantWeights: [80, 40, 20, 20, 2],
     welcome: {
       borderWidth: 12, padding: 8,
       tiles: {
-      topLeft: ["assets/ui/frames/top-left-1.png", "assets/ui/frames/top-left-2.png", "assets/ui/frames/top-left-3.png", "assets/ui/frames/top-left-4.png"],
-      top: ["assets/ui/frames/top-1.png", "assets/ui/frames/top-2.png", "assets/ui/frames/top-3.png", "assets/ui/frames/top-4.png"],
-      topRight: ["assets/ui/frames/top-right-1.png", "assets/ui/frames/top-right-2.png", "assets/ui/frames/top-right-3.png", "assets/ui/frames/top-right-4.png"],
-      left: ["assets/ui/frames/left-1.png", "assets/ui/frames/left-2.png", "assets/ui/frames/left-3.png", "assets/ui/frames/left-4.png"],
-      center: ["assets/ui/frames/center-1.png", "assets/ui/frames/center-2.png", "assets/ui/frames/center-3.png", "assets/ui/frames/center-4.png", "assets/ui/frames/center-5.png", "assets/ui/frames/center-6.png", "assets/ui/frames/center-7.png", "assets/ui/frames/center-8.png"],
-      right: ["assets/ui/frames/right-1.png", "assets/ui/frames/right-2.png", "assets/ui/frames/right-3.png", "assets/ui/frames/right-4.png"],
-      bottomLeft: ["assets/ui/frames/bottom-left-1.png", "assets/ui/frames/bottom-left-2.png", "assets/ui/frames/bottom-left-3.png", "assets/ui/frames/bottom-left-4.png"],
-      bottom: ["assets/ui/frames/bottom-1.png", "assets/ui/frames/bottom-2.png", "assets/ui/frames/bottom-3.png", "assets/ui/frames/bottom-4.png"],
-      bottomRight: ["assets/ui/frames/bottom-right-1.png", "assets/ui/frames/bottom-right-2.png", "assets/ui/frames/bottom-right-3.png", "assets/ui/frames/bottom-right-4.png"]
+      topLeft: ["assets/ui/top-left-1.png", "assets/ui/top-left-2.png", "assets/ui/top-left-3.png", "assets/ui/top-left-4.png"],
+      top: ["assets/ui/top-1.png", "assets/ui/top-2.png", "assets/ui/top-3.png", "assets/ui/top-4.png"],
+      topRight: ["assets/ui/top-right-1.png", "assets/ui/top-right-2.png", "assets/ui/top-right-3.png", "assets/ui/top-right-4.png"],
+      left: ["assets/ui/left-1.png", "assets/ui/left-2.png", "assets/ui/left-3.png", "assets/ui/left-4.png"],
+      center: ["assets/ui/center-1.png", "assets/ui/center-2.png", "assets/ui/center-3.png", "assets/ui/center-4.png", "assets/ui/center-5.png", "assets/ui/center-6.png", "assets/ui/center-7.png", "assets/ui/center-8.png", "assets/ui/center-9.png"],
+      right: ["assets/ui/right-1.png", "assets/ui/right-2.png", "assets/ui/right-3.png", "assets/ui/right-4.png"],
+      bottomLeft: ["assets/ui/bottom-left-1.png", "assets/ui/bottom-left-2.png", "assets/ui/bottom-left-3.png", "assets/ui/bottom-left-4.png"],
+      bottom: ["assets/ui/bottom-1.png", "assets/ui/bottom-2.png", "assets/ui/bottom-3.png", "assets/ui/bottom-4.png"],
+      bottomRight: ["assets/ui/bottom-right-1.png", "assets/ui/bottom-right-2.png", "assets/ui/bottom-right-3.png", "assets/ui/bottom-right-4.png"]
       }
     },
     social: {
@@ -148,8 +147,8 @@ window.SITE = {
 
   // Приветствие
   welcome: {
-    en: " I've been making games with pixels for 8 years. I specialize in environments, backgrounds, props, icons, and illustrations. I've worked on all kinds of game art, from UI elements to character animations. Feel free to check out my work below and drop me a message anytime!",
-    ru: "Рисую игры пикселями уже 8 лет. Специализируюсь на отрисовке окружения, фонов, пропсов, иконок и иллюстраций. Имею опыт в создании всей игровой графики - от элементов UI, до анимации персонажей. Вы можете посмотреть мои работы ниже. Пишите в любое время"
+    en: "I've been drawing games with pixels for 8 years. I specialize in environments, props, icons, and illustrations. I've worked on all kinds of game art, from UI elements to character animations. You can check out my work below and drop me a message anytime!",
+    ru: "Рисую игры пикселями уже 8 лет. Специализируюсь на отрисовке окружения, фонов, пропсов, иконок и иллюстраций. Есть опыт в создании всей игровой графики - от элементов UI, до анимации персонажей. Вы можете посмотреть мои работы ниже. Пишите в любое время"
   },
 
   // Остальные тексты интерфейса
@@ -176,57 +175,73 @@ window.SITE = {
   // (если fullDesc пустое или его нет, в просмотре показывается desc).
   gallery: [
 	/*0*/	  
-    { file: "assets/gallery/0.png", format: "png",
+    /*{ file: "assets/gallery/0.png", format: "png",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-	/*2*/	  
-    { file: "assets/gallery/2.gif", format: "gif",
+      fullDesc: { en: "", ru: "" } },*/
+	/*1*/	  
+    { file: "assets/gallery/1.gif", format: "gif",
+      desc: { en: "Animated mockup", ru: "Анимированный мокап" },
+      fullDesc: { en: "Animated mockup 2025", ru: "Анимированный мокап 2025" } },
+	/*5*/	  
+    { file: "assets/gallery/5.png", format: "png",
+      desc: { en: "Item icons", ru: "Иконки предметов" },
+      fullDesc: { en: "Icons for WIP project 2026", ru: "Иконки для WIP-проекта 2026" } },
+	/*6*/	  
+    { file: "assets/gallery/6.png", format: "png",
+      desc: { en: "Props", ru: "Пропсы" },
+      fullDesc: { en: "Props for WIP project", ru: "Пропсы для WIP-проекта" } },
+	/*7*/	  
+    { file: "assets/gallery/7.png", format: "png",
+      desc: { en: "Upgrade icons", ru: "Иконки улучшений" },
+      fullDesc: { en: "Icons for WIP project 2026 #2", ru: "Иконки для WIP-проекта 2026 #2" } },
+	/*3*/
+    { file: "assets/gallery/3.gif", format: "gif",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-	/*3*/	  
-    { file: "assets/gallery/3.png", format: "png",
-      desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
+      fullDesc: { en: "Twitch intro 2023", ru: "Заставка для Twitch 2023" } },
 	/*4*/	  
     { file: "assets/gallery/4.png", format: "png",
+      desc: { en: "Mockup", ru: "Мокап" },
+      fullDesc: { en: "Mockup 2025", ru: "Мокап 2025" } },
+	/*2*/	  
+    { file: "assets/gallery/2.png", format: "png",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-	/*1*/
-    { file: "assets/gallery/1.gif", format: "gif",
-      desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
+      fullDesc: { en: "2023", ru: "2023" } },
+	/*8*/	  
+    { file: "assets/gallery/8.png", format: "png",
+      desc: { en: "The Excrawlers game on Steam", ru: "Игра The Excrawlers в Steam" },
+      fullDesc: { en: "Created all environment art and props for The Excrawlers in 2021-2022 https://store.steampowered.com/app/1598910/The_Excrawlers/", ru: "Создал всё окружение и пропсы для The Excrawlers в 2021-2022 https://store.steampowered.com/app/1598910/The_Excrawlers/" } },
 	/*9*/	  
     { file: "assets/gallery/9.png", format: "png",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
+      fullDesc: { en: "Ю 2024", ru: "Ю 2024" } },
 	/*10*/	  
     { file: "assets/gallery/10.png", format: "png",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-	/*11*/	  
-    { file: "assets/gallery/11.png", format: "png",
+      fullDesc: { en: "2026", ru: "2026" } },
+	/*12*/	  
+    { file: "assets/gallery/12.png", format: "png",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-	/*5*/	  
-    { file: "assets/gallery/5.png", format: "png",
+      fullDesc: { en: "2023", ru: "2023" } },
+	/*13*/	  
+    { file: "assets/gallery/13.png", format: "png",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-	/*6*/	  
-    { file: "assets/gallery/6.png", format: "png",
+      fullDesc: { en: "Mockup 2023", ru: "Мокап 2023" } },
+	/*14*/	  
+    { file: "assets/gallery/14.png", format: "png",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-	/*7*/	  
-    { file: "assets/gallery/7.png", format: "png",
-      desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-	/*8*/	  
-    { file: "assets/gallery/8.png", format: "png",
-      desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
+      fullDesc: { en: "2022", ru: "2022" } },
 	/*15*/	  
     { file: "assets/gallery/15.png", format: "png",
       desc: { en: "", ru: "" },
-      fullDesc: { en: "", ru: "" } },
-
+      fullDesc: { en: "2021", ru: "2021" } },
+	/*16*/	  
+    { file: "assets/gallery/16.png", format: "png",
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "2022", ru: "2022" } },
+	/*17*/	  
+    { file: "assets/gallery/17.png", format: "png",
+      desc: { en: "", ru: "" },
+      fullDesc: { en: "2022", ru: "2022" } },
+	
   ]
 };
