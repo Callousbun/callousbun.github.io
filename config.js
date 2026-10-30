@@ -75,7 +75,6 @@ window.SITE = {
   // Все три файла одной кнопки должны быть одного размера.
   images: {
     avatar: "assets/ui/avatar.png",
-    status: "assets/ui/status.gif",
     footer: "assets/footer/footer.png",
     // Кнопка звука рисуется кодом. Свои картинки (необязательно): sound: { on: {normal, hover, active}, off: {normal, hover, active} }
 
@@ -143,20 +142,20 @@ window.SITE = {
   },
 
   // Заголовок над приветствием (пустая строка "" скроет его)
-  title: { en: "Hi! I'm Callousbun", ru: "Привет, я Callousbun" },
+  title: { en: "Callousbun", ru: "Callousbun" },
 
   // Приветствие
   welcome: {
-    en: "I've been drawing games with pixels for 8 years. I specialize in environments, props, icons, and illustrations. I've worked on all kinds of game art, from UI elements to character animations. You can check out my work below and drop me a message anytime!",
-    ru: "Рисую игры пикселями уже 8 лет. Специализируюсь на отрисовке окружения, фонов, пропсов, иконок и иллюстраций. Есть опыт в создании всей игровой графики - от элементов UI, до анимации персонажей. Вы можете посмотреть мои работы ниже. Пишите в любое время"
+    en: "Pixel artist specializing in environment art and illustrations. Making pixel art since 2018. Open for commissions.", //"I've been drawing games with pixels for 8 years. I specialize in environments, props, icons, and illustrations. I've worked on all kinds of game art, from UI elements to character animations. You can check out my work below and drop me a message anytime!",
+    ru: "Пиксель-арт художник, специализируюсь на игровом окружении и иллюстрациях. Рисую пиксель-арт с 2018 года. Открыт для заказов." //"Рисую игры пикселями уже 8 лет. Специализируюсь на отрисовке окружения, фонов, пропсов, иконок и иллюстраций. Работал над созданием всей игровой графики - от элементов UI, до анимации персонажей. Вы можете посмотреть мои работы ниже а также написать мне в любое время"
   },
 
   // Остальные тексты интерфейса
   strings: {
     en: { copyHint: "(click to copy)", copied: "Copied!", copyFailed: "Select and copy manually",
-          close: "Close", prev: "Previous work", next: "Next work", zoom: "Zoom", status: "Open for commissions", soundOn: "Sound: on", soundOff: "Sound: off", gallery: "Gallery", viewer: "Image viewer" },
-    ru: { copyHint: "(нажмите, чтобы скопировать)", copied: "Скопировано!", copyFailed: "Выделите и скопируйте вручную",
-          close: "Закрыть", prev: "Предыдущая работа", next: "Следующая работа", zoom: "Масштаб", status: "Открыт для заказов", soundOn: "Звук: включён", soundOff: "Звук: выключен", gallery: "Галерея", viewer: "Просмотр изображения" }
+          close: "Close", prev: "Previous work", next: "Next work", zoom: "Zoom", soundOn: "Sound: on", soundOff: "Sound: off", gallery: "Gallery", viewer: "Image viewer" },
+    ru: { copyHint: "(скопировать)", copied: "Скопировано!", copyFailed: "Выделите и скопируйте вручную",
+          close: "Закрыть", prev: "Предыдущая работа", next: "Следующая работа", zoom: "Масштаб", soundOn: "Звук: включён", soundOff: "Звук: выключен", gallery: "Галерея", viewer: "Просмотр изображения" }
   },
 
   // Контакты (иконка: normal / hover / active). type "copy" - копирует text в буфер, type "link" - открывает url в новой вкладке

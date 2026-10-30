@@ -322,7 +322,6 @@
   /* ---------- Приветствие ---------- */
   function iconBox() { return narrow() ? 96 : 160; }
   uiImage($("#avatar"), S.images.avatar, function (w, h) { var b = iconBox(); return uiScale(w, h, b, b); });
-  uiImage($("#status"), S.images.status, function (w, h) { var b = iconBox() / 3; return uiScale(w, h, b, b); });
 
   var welcomeDraw = frame($("#welcome"), "welcome", {
     exposeVars: true,
