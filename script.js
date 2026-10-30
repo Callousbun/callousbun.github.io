@@ -34,6 +34,12 @@
     var s = Math.floor(Math.min(maxW * R / w, maxH * R / h) + 1e-6);
     return Math.max(kmin, Math.min(Math.max(kmin, Math.ceil(10 * R)), s));
   }
+  /* Масштаб тайлов рамки welcome в физических пикселях. К нему привязаны кнопки звука и языка:
+     если рамка 4x, то и они 4x. */
+  function tileScale() {
+    var kc = narrow() ? MIN : Math.max(MIN, (S.frames && S.frames.scale) || 2);
+    return Math.max(1, Math.round(kc * ratio()));
+  }
   function applySize(img, s) {
     img.style.width = css(img.naturalWidth * s);
     img.style.height = css(img.naturalHeight * s);
@@ -110,6 +116,7 @@
       host.addEventListener("pointercancel", function () { pressing = false; draw(); });
     }
     draw.size = size;
+    draw.dims = function () { return { w: w, h: h }; };
     return draw;
   }
 
@@ -160,8 +167,7 @@
     function draw() {
       if (!ready) return;
       var R = ratio();
-      var kc = narrow() ? MIN : Math.max(MIN, S.frames.scale || 2);
-      var k = Math.max(1, Math.round(kc * R));     // масштаб тайлов в физических пикселях
+      var k = tileScale();                         // масштаб тайлов в физических пикселях
       var sw = tw * k, sh = th * k;                // размер тайла в физических пикселях
       var rowMode = cfg.layout === "row";          // "row": панель из левого, центрального и правого тайла
       var bw = (cfg.borderWidth == null ? tw : cfg.borderWidth) * k + Math.round((cfg.padding || 0) * R);
@@ -238,19 +244,47 @@
     Object.keys(langRefresh).forEach(function (c) { langRefresh[c](); });
     langUpdaters.forEach(function (f) { f(); });
   }
-  var langBar = $("#langBar");
-  Object.keys(S.images.lang).forEach(function (code) {
+  var langBar = $("#langBar"), langCodes = Object.keys(S.images.lang), langDraws = [];
+  var langPtr = "mouse";   // чем нажали последний раз: mouse / touch / pen
+  langBar.addEventListener("pointerdown", function (e) { langPtr = e.pointerType; }, true);
+  // касание (не мышь и не клавиатура): переключает язык вся область кнопок, а не конкретная кнопка
+  function langByArea(e) { return e.detail !== 0 && langPtr !== "mouse"; }
+  langCodes.forEach(function (code) {
     var btn = document.createElement("button");
     btn.type = "button"; btn.className = "pbtn";
     var img = document.createElement("img"); img.className = "px";
     img.alt = (S.langNames && S.langNames[code]) || code.toUpperCase();
     btn.appendChild(img); langBar.appendChild(btn);
-    var draw = uiImage(img, S.images.lang[code], function (w, h) {
-      return narrow() ? uiScale(w, h, 72, 32) : uiScale(w, h, 96, 40);
-    }, btn, function () { return lang === code; });
+    // масштаб = масштабу тайлов рамки welcome
+    var draw = uiImage(img, S.images.lang[code], tileScale, btn, function () { return lang === code; }, layoutLangBar);
+    langDraws.push(draw);
     langRefresh[code] = function () { btn.setAttribute("aria-pressed", lang === code ? "true" : "false"); draw(); };
-    btn.addEventListener("click", function () { lang = code; applyLang(); });
+    btn.addEventListener("click", function (e) {
+      if (langByArea(e)) return;          // на телефоне это обработает область целиком (ниже)
+      lang = code; applyLang();
+    });
   });
+  langBar.addEventListener("click", function (e) {
+    if (!langByArea(e)) return;
+    lang = langCodes[(langCodes.indexOf(lang) + 1) % langCodes.length]; applyLang();
+  });
+  /* Кнопки языка стали крупнее, но строка над рамкой не должна расти и сдвигать приветствие:
+     лишняя высота уходит ВВЕРХ, в верхний отступ страницы (если он меньше - остаток сдвинет вёрстку). */
+  function layoutLangBar() {
+    var R = ratio(), oldH = 0, newH = 0, k = tileScale();
+    langDraws.forEach(function (d) {
+      var m = d.dims(); if (!m.w) return;
+      var os = narrow() ? uiScale(m.w, m.h, 72, 32) : uiScale(m.w, m.h, 96, 40);   // прежний масштаб
+      oldH = Math.max(oldH, m.h * os / R); newH = Math.max(newH, m.h * k / R);
+    });
+    var topRow = langBar.parentElement;
+    topRow.style.minHeight = oldH + "px";
+    var head = parseFloat(getComputedStyle($(".page")).paddingTop) || 0;
+    var up = Math.max(0, Math.min(newH - oldH, head));
+    langBar.style.marginTop = up ? -up + "px" : "";
+    scheduleAlign();
+  }
+  scalers.push(layoutLangBar);
 
   /* ---------- Кнопка звука ----------
      Иконки рисуются кодом (пиксельные 16x16). Свои PNG - в config.js, images.sound. */
@@ -302,9 +336,7 @@
     var srcs = (S.images.sound && S.images.sound[k]) || {
       normal: sndIcon(k, "#c3c7d3", "#d9534f"), hover: sndIcon(k, "#ffffff", "#ff7a73"), active: sndIcon(k, "#7fd18b", "#ffb0ab")
     };
-    uiImage(soundBtn.querySelector("img." + k), srcs, function (w, h) {
-      return narrow() ? uiScale(w, h, 72, 32) : uiScale(w, h, 96, 40);
-    }, soundBtn);
+    uiImage(soundBtn.querySelector("img." + k), srcs, tileScale, soundBtn);   // масштаб = масштабу тайлов welcome
   });
   function syncSound() {
     var fx = window.SoundFX, off = !!(fx && fx.isMuted());
@@ -359,10 +391,12 @@
     });
     label.appendChild(text);
     var hint, toast;
-    if (c.type === "copy") {
+    if (c.type === "copy" || c.type === "link") {
       hint = document.createElement("span"); hint.className = "hint";
       label.appendChild(document.createTextNode(" "));   // пробел: подпись переносится под адрес целиком
       label.appendChild(hint);
+    }
+    if (c.type === "copy") {
       toast = document.createElement("span"); toast.className = "toast";
       el.appendChild(toast);
     }
@@ -371,7 +405,7 @@
 
     langUpdaters.push(function () {
       el.title = L(c.title);
-      if (hint) hint.textContent = T("copyHint");
+      if (hint) hint.textContent = T(c.type === "link" ? "openHint" : "copyHint");
     });
 
     if (c.type === "copy") {
@@ -447,8 +481,34 @@
       return s;
     });
     langUpdaters.push(function () { desc.textContent = L(w.desc); img.alt = L(w.desc); });
-    card.addEventListener("click", function () { openViewer(index, card); });
+    card.addEventListener("click", function (e) { openViewer(index, card, e.detail === 0); });   // detail 0 - открыли с клавиатуры
   });
+
+  /* Обводка арта под курсором. Одного CSS :hover мало: пока страница прокручивается, браузер обновляет :hover
+     только после остановки. Поэтому запоминаем положение мыши и при каждом кадре прокрутки сами смотрим,
+     какой арт сейчас под курсором. */
+  var mouseX = null, mouseY = null, hoverCard = null, hoverRaf = 0;
+  function setHoverCard(c) {
+    if (c === hoverCard) return;
+    if (hoverCard) hoverCard.classList.remove("hover");
+    hoverCard = c;
+    if (c) c.classList.add("hover");
+  }
+  function updateHover() {
+    hoverRaf = 0;
+    if (mouseX == null || (viewer && !viewer.hidden)) { setHoverCard(null); return; }
+    var el = document.elementFromPoint(mouseX, mouseY);
+    setHoverCard(el && el.closest ? el.closest(".work") : null);
+  }
+  function scheduleHover() { if (!hoverRaf) hoverRaf = requestAnimationFrame(updateHover); }
+  document.addEventListener("pointermove", function (e) {
+    if (e.pointerType !== "mouse") { mouseX = mouseY = null; setHoverCard(null); return; }   // на касаниях обводки наведения нет
+    mouseX = e.clientX; mouseY = e.clientY; scheduleHover();
+  }, true);
+  document.addEventListener("pointerdown", function (e) { if (e.pointerType !== "mouse") { mouseX = mouseY = null; setHoverCard(null); } }, true);
+  document.documentElement.addEventListener("mouseleave", function () { mouseX = mouseY = null; setHoverCard(null); });
+  window.addEventListener("scroll", scheduleHover, { passive: true });
+  window.addEventListener("resize", scheduleHover);
 
   /* ---------- Просмотр ---------- */
   var viewer = $("#viewer"), vRow = $("#viewerRow"), vStage = $("#viewerStage"), vImg = $("#viewerImg"), vCap = $("#viewerCaption");
@@ -495,8 +555,8 @@
     if (vImg.complete && vImg.naturalWidth) refreshViewer();
   }
   function go(d) { if (openWork && S.gallery.length > 1) { setWork(idx + d); wake(); } }
-  function openViewer(i, from) {
-    lastFocus = from;
+  function openViewer(i, from, viaKeyboard) {
+    lastFocus = viaKeyboard ? from : null;   // фокус возвращаем только тем, кто открыл арт с клавиатуры
     viewer.hidden = false;
     document.body.style.overflow = "hidden";   // позиция страницы не меняется
     var many = S.gallery.length > 1;
@@ -510,7 +570,11 @@
     viewer.hidden = true; openWork = null;
     document.body.style.overflow = "";
     clearTimeout(idleTimer);
+    // После Escape браузер считает фокус "клавиатурным" и рисует на арте обводку, поэтому при открытии
+    // мышью или касанием фокус не возвращаем. Клавиатурным пользователям он нужен - им оставляем.
     if (lastFocus) lastFocus.focus({ preventScroll: true });
+    lastFocus = null;
+    scheduleHover();
   }
   uiImage($("#viewerClose").querySelector("img"), S.images.close, function (w, h) { var b = narrow() ? 48 : 64; return uiScale(w, h, b, b); }, $("#viewerClose"));
   $("#viewerClose").addEventListener("click", closeViewer);
@@ -684,6 +748,20 @@
     fImg.style.marginLeft = css(Math.floor((vwDev - i.naturalWidth * s) / 2));
     return s;
   });
+
+  /* ---------- Защита спрайтов от перетаскивания и от "скачать картинку" ----------
+     ПК: картинку нельзя утащить мышью в другую вкладку или на рабочий стол (правая кнопка мыши не трогается).
+     Телефон: долгое нажатие на картинку не открывает меню "скачать/сохранить". */
+  document.addEventListener("dragstart", function (e) {
+    var t = e.target;
+    if (t && t.closest && t.closest("img, canvas, .contact, .work")) e.preventDefault();
+  }, true);
+  var ctxPtr = "mouse";
+  document.addEventListener("pointerdown", function (e) { ctxPtr = e.pointerType; }, true);
+  document.addEventListener("contextmenu", function (e) {
+    var t = e.target;
+    if (ctxPtr !== "mouse" && t && t.tagName === "IMG") e.preventDefault();
+  }, true);
 
   /* ---------- Запуск ---------- */
   var raf, lastR = ratio();

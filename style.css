@@ -25,7 +25,7 @@ body { font-family:"PixeloidSans", monospace; line-height:27px; -webkit-font-smo
 .page { max-width:960px; margin:0 auto; padding:16px; }
 
 .top-row { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; max-width:100%; margin:0 0 8px var(--welcome-ml, 0px); width:var(--welcome-w, auto); }  /* строка над приветствием: язык слева, звук справа, по ширине рамки */
-.lang { display:flex; gap:4px; }
+.lang { display:flex; gap:0; }   /* кнопки языка вплотную друг к другу */
 .btn { background:var(--panel); color:var(--text); border:1px solid var(--line); padding:4px 10px; font:inherit; font-size:13px; cursor:pointer; }
 .btn:hover { border-color:var(--text); }
 
@@ -53,7 +53,7 @@ body { font-family:"PixeloidSans", monospace; line-height:27px; -webkit-font-smo
 .gallery-wrap { padding:0 32px 32px; }
 .gallery { display:flex; flex-wrap:wrap; justify-content:center; gap:24px; align-items:flex-start; }
 .work { background:none; border:1px solid transparent; padding:8px; color:var(--text); font:inherit; text-align:left; cursor:pointer; }
-.work:hover, .work:focus-visible { border-color:var(--text); outline:none; }
+.work.hover, .work:focus-visible { border-color:var(--text); outline:none; }   /* .hover ставит script.js: так обводка следует за курсором и во время прокрутки */
 .work .desc { font-family:var(--ff-desc); font-size:var(--fs-desc-px, var(--fs-desc)); line-height:var(--lh-desc-px, var(--lh-desc)); color:var(--dim); margin-top:8px; overflow-wrap:anywhere; }
 
 .footer-art { margin-top:48px; overflow:hidden; line-height:0; }
@@ -126,3 +126,17 @@ html.loading .page, html.loading .gallery-wrap, html.loading .footer-art { opaci
   :root { --fs-title:45px; --lh-title:54px; --fs-welcome:27px; --lh-welcome:40px; }
 }
 
+
+/* --- Этап 8 --- */
+/* Стрелки галереи: область нажатия шире самого спрайта (спрайт не увеличивается) */
+.nav::before { content:""; position:absolute; top:-36px; bottom:-36px; left:-24px; right:-24px; }
+
+/* Кнопки соцсетей: наведение и клик - только по кругу размером со спрайт (углы квадрата не считаются).
+   Сам .contact события не ловит, их ловят иконка (круг) и подпись. */
+.contact { pointer-events:none; }
+.contact > img { pointer-events:auto; border-radius:50%; }
+.contact > .label { pointer-events:auto; }
+
+/* Спрайты нельзя выделить, перетащить мышью или "сохранить" долгим нажатием на телефоне */
+.px, .frame-canvas { -webkit-user-drag:none; user-drag:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+.pbtn, .work, .contact > img { -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }

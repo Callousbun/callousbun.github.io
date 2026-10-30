@@ -76,7 +76,8 @@ window.SITE = {
   images: {
     avatar: "assets/ui/avatar.png",
     footer: "assets/footer/footer.png",
-    // Кнопка звука рисуется кодом. Свои картинки (необязательно): sound: { on: {normal, hover, active}, off: {normal, hover, active} }
+    // Кнопка звука 
+	sound: { on: { normal: "assets/ui/sound-on.png", hover: "assets/ui/sound-on-hover.png", active: "assets/ui/sound-on-active.png" }, off: { normal: "assets/ui/sound-off.png", hover: "assets/ui/sound-off-hover.png", active: "assets/ui/sound-off-active.png" } },
 
     // Кнопки переключения языка
     lang: {
@@ -152,9 +153,9 @@ window.SITE = {
 
   // Остальные тексты интерфейса
   strings: {
-    en: { copyHint: "(click to copy)", copied: "Copied!", copyFailed: "Select and copy manually",
+    en: { copyHint: "(click to copy)", openHint: "(click to open)", copied: "Copied!", copyFailed: "Select and copy manually",
           close: "Close", prev: "Previous work", next: "Next work", zoom: "Zoom", soundOn: "Sound: on", soundOff: "Sound: off", gallery: "Gallery", viewer: "Image viewer" },
-    ru: { copyHint: "(скопировать)", copied: "Скопировано!", copyFailed: "Выделите и скопируйте вручную",
+    ru: { copyHint: "(скопировать)", openHint: "(перейти)", copied: "Скопировано!", copyFailed: "Выделите и скопируйте вручную",
           close: "Закрыть", prev: "Предыдущая работа", next: "Следующая работа", zoom: "Масштаб", soundOn: "Звук: включён", soundOff: "Звук: выключен", gallery: "Галерея", viewer: "Просмотр изображения" }
   },
 
