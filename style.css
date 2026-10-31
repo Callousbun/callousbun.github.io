@@ -73,7 +73,8 @@ body { font-family:"PixeloidSans", monospace; line-height:27px; -webkit-font-smo
 .zoom { display:flex; align-items:center; gap:10px; transition:opacity .4s; }
 .zoom span { min-width:3ch; font-family:var(--ff-zoom); font-size:var(--fs-zoom-px, var(--fs-zoom)); line-height:var(--lh-zoom-px, var(--lh-zoom)); }
 .viewer-caption { transition:opacity .4s; }
-.viewer.idle .zoom, .viewer.idle .viewer-caption { opacity:0; pointer-events:none; }
+.viewer.idle .zoom, .viewer.idle .viewer-caption, .viewer.idle #viewerClose { opacity:0; pointer-events:none; }
+#viewerClose { transition:opacity .4s; }
 .viewer.idle { cursor:none; }
 .viewer-stage.pannable { cursor:grab; }
 .viewer-stage.dragging { cursor:grabbing; }

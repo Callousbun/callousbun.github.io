@@ -569,7 +569,7 @@
     if (viewer.hidden) return;
     viewer.hidden = true; openWork = null;
     document.body.style.overflow = "";
-    clearTimeout(idleTimer);
+	clearTimeout(idleTimer); uiHover = false;
     // После Escape браузер считает фокус "клавиатурным" и рисует на арте обводку, поэтому при открытии
     // мышью или касанием фокус не возвращаем. Клавиатурным пользователям он нужен - им оставляем.
     if (lastFocus) lastFocus.focus({ preventScroll: true });
@@ -638,12 +638,18 @@
   vStage.addEventListener("pointercancel", endDrag);
 
   /* Автоскрытие интерфейса просмотра после 2 секунд без движения */
-  var idleTimer;
+  var idleTimer, uiHover = false;   // uiHover: курсор сейчас над элементом интерфейса
   function wake() {
     viewer.classList.remove("idle");
     clearTimeout(idleTimer);
-    idleTimer = setTimeout(function () { viewer.classList.add("idle"); }, 2000);
+    idleTimer = setTimeout(function () { if (!uiHover) viewer.classList.add("idle"); }, 2000);   // пока курсор на интерфейсе - не скрываем
   }
+  // стрелки, крестик, ползунок и описание: пока над ними мышь, интерфейс не гаснет; ушла - снова отсчёт 2 секунд
+  ["#prevBtn", "#nextBtn", "#viewerClose", "#zoomBox", "#viewerCaption"].forEach(function (sel) {
+    var el = $(sel);
+    el.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") uiHover = true; });
+    el.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") { uiHover = false; if (!viewer.hidden) wake(); } });
+  });
   viewer.addEventListener("pointermove", wake);
   viewer.addEventListener("pointerdown", wake);
 
