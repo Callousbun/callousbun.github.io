@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Callousbun</title>
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<meta name="theme-color" content="#181519">
+<link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add("loading");setTimeout(function(){document.documentElement.classList.remove("loading")},6000);</script>
+</head>
+<body>
+<main class="page">
+  <div class="top-row">
+    <div class="lang" id="langBar" role="group" aria-label="Language"></div>
+  </div>
+
+  <section class="welcome" id="welcome">
+    <button type="button" id="soundBtn" class="pbtn" style="display:none"><img class="px on" alt=""><img class="px off" alt=""></button>
+    <h1 id="welcomeTitle" class="welcome-title"></h1>
+    <div class="welcome-body">
+      <div class="avatar-col">
+        <img id="avatar" class="px" alt="Avatar">
+      </div>
+      <p id="welcomeText" class="bubble"></p>
+    </div>
+    <section id="contacts" class="contacts"></section>
+  </section>
+
+</main>
+
+<div class="gallery-wrap">
+  <section id="gallery" class="gallery" data-i18n-label="gallery"></section>
+</div>
+
+<div id="footerArt" class="footer-art"><img id="footerImg" class="px" alt=""></div>
+
+<div id="viewer" class="viewer" hidden role="dialog" aria-modal="true">
+  <div class="viewer-bar"><div class="zoom" id="zoomBox"><div id="slider" class="slider" role="slider" tabindex="0" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1"></div><span id="zoomVal">1x</span></div><button type="button" id="viewerClose" class="pbtn"><img class="px" alt=""></button></div>
+  <div id="viewerRow" class="viewer-row">
+    <button type="button" id="prevBtn" class="pbtn nav"><img class="px" alt=""></button>
+    <div id="viewerStage" class="viewer-stage"><img id="viewerImg" class="px" alt="" draggable="false"></div>
+    <button type="button" id="nextBtn" class="pbtn nav"><img class="px" alt=""></button>
+  </div>
+  <div id="viewerCaption" class="viewer-caption"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="script.js"></script>
+<script src="sounds.js"></script>
+</body>
+</html>
